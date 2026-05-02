@@ -1,0 +1,34 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - AutoServiceBooking</title>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    <header>
+        <nav class="main-menu">
+            <a class="logo" asp-controller="Home" asp-action="Index">AutoServiceBooking</a>
+
+            <div class="menu-links">
+                <a asp-controller="Home" asp-action="Index">Головна</a>
+                <a asp-controller="Home" asp-action="Privacy">Про проєкт</a>
+            </div>
+
+            <partial name="_LoginPartial" />
+        </nav>
+    </header>
+
+    <div class="page">
+        <main>
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer>
+        &copy; 2026 - AutoServiceBooking
+    </footer>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
