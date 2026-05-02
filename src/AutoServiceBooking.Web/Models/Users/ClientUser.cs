@@ -1,3 +1,5 @@
+using AutoServiceBooking.Web.Models;
+
 namespace AutoServiceBooking.Web.Models.Users
 {
     public class ClientUser : AppUser
@@ -11,5 +13,9 @@ namespace AutoServiceBooking.Web.Models.Users
         {
             Role = UserRole.Client;
         }
+
+        public ICollection<Vehicle> Vehicles { get; private set; } = new List<Vehicle>();
+
+        public ICollection<Booking> Bookings { get; private set; } = new List<Booking>();
     }
 }

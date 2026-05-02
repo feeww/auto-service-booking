@@ -1,4 +1,5 @@
-﻿using AutoServiceBooking.Web.Models.Users;
+﻿using AutoServiceBooking.Web.Models;
+using AutoServiceBooking.Web.Models.Users;
 using Microsoft.EntityFrameworkCore;
 
 namespace AutoServiceBooking.Web.Data
@@ -14,6 +15,12 @@ namespace AutoServiceBooking.Web.Data
         public DbSet<ClientUser> Clients { get; set; }
 
         public DbSet<AdminUser> Admins { get; set; }
+
+        public DbSet<AutoService> AutoServices { get; set; }
+
+        public DbSet<Vehicle> Vehicles { get; set; }
+
+        public DbSet<Booking> Bookings { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -36,6 +43,66 @@ namespace AutoServiceBooking.Web.Data
                 entity.HasDiscriminator(user => user.Role)
                     .HasValue<ClientUser>(UserRole.Client)
                     .HasValue<AdminUser>(UserRole.Admin);
+            });
+
+            modelBuilder.Entity<AutoService>(entity =>
+            {
+                entity.ToTable("AutoServices");
+
+                entity.HasKey(autoService => autoService.Id);
+
+                entity.Property(autoService => autoService.Name).HasMaxLength(100).IsRequired();
+                entity.Property(autoService => autoService.Description).HasMaxLength(500).IsRequired();
+                entity.Property(autoService => autoService.Price).HasColumnType("numeric(10,2)").IsRequired();
+                entity.Property(autoService => autoService.DurationMinutes).IsRequired();
+                entity.Property(autoService => autoService.IsActive).IsRequired();
+            });
+
+            modelBuilder.Entity<Vehicle>(entity =>
+            {
+                entity.ToTable("Vehicles");
+
+                entity.HasKey(vehicle => vehicle.Id);
+
+                entity.Property(vehicle => vehicle.Make).HasMaxLength(60).IsRequired();
+                entity.Property(vehicle => vehicle.Model).HasMaxLength(60).IsRequired();
+                entity.Property(vehicle => vehicle.LicensePlate).HasMaxLength(20).IsRequired();
+                entity.Property(vehicle => vehicle.Year).IsRequired();
+                entity.Property(vehicle => vehicle.Mileage).IsRequired();
+                entity.Property(vehicle => vehicle.FuelType).HasConversion<string>().HasMaxLength(20).IsRequired();
+
+                entity.HasOne(vehicle => vehicle.ClientUser)
+                    .WithMany(client => client.Vehicles)
+                    .HasForeignKey(vehicle => vehicle.ClientUserId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<Booking>(entity =>
+            {
+                entity.ToTable("Bookings");
+
+                entity.HasKey(booking => booking.Id);
+
+                entity.Property(booking => booking.ProblemDescription).HasMaxLength(1000);
+                entity.Property(booking => booking.FinalPrice).HasColumnType("numeric(10,2)");
+                entity.Property(booking => booking.AdminComment).HasMaxLength(1000);
+                entity.Property(booking => booking.Status).HasConversion<string>().HasMaxLength(30).IsRequired();
+                entity.Property(booking => booking.ScheduledAt).IsRequired();
+
+                entity.HasOne(booking => booking.ClientUser)
+                    .WithMany(client => client.Bookings)
+                    .HasForeignKey(booking => booking.ClientUserId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(booking => booking.Vehicle)
+                    .WithMany(vehicle => vehicle.Bookings)
+                    .HasForeignKey(booking => booking.VehicleId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(booking => booking.AutoService)
+                    .WithMany(autoService => autoService.Bookings)
+                    .HasForeignKey(booking => booking.AutoServiceId)
+                    .OnDelete(DeleteBehavior.Restrict);
             });
         }
     }
