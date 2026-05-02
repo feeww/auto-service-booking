@@ -1,19 +1,26 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="uk">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - AutoServiceBooking</title>
+    <title>@ViewData["Title"] - DriveFix Service</title>
+    <link rel="icon" type="image/x-icon" href="~/favicon.ico" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@@phosphor-icons/web@2.1.1/src/regular/style.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
 <body>
     <header>
         <nav class="main-menu">
-            <a class="logo" asp-controller="Home" asp-action="Index">AutoServiceBooking</a>
+            <a class="logo" href="/#top" data-nav-link="top">
+                <img src="~/favicon.ico" asp-append-version="true" alt="" />
+                <span>DriveFix Service</span>
+            </a>
 
             <div class="menu-links">
-                <a asp-controller="Home" asp-action="Index">Головна</a>
-                <a asp-controller="Home" asp-action="Privacy">Про проєкт</a>
+                <a href="/#top" data-nav-link="top">Головна</a>
+                <a href="/#benefits" data-nav-link="benefits">Переваги</a>
+                <a href="/#services" data-nav-link="services">Послуги</a>
+                <a href="/#contacts" data-nav-link="contacts">Контакти</a>
             </div>
 
             <partial name="_LoginPartial" />
@@ -27,8 +34,11 @@
     </div>
 
     <footer>
-        &copy; 2026 - AutoServiceBooking
+        <div class="footer-inner">
+            &copy; 2026 - DriveFix Service
+        </div>
     </footer>
+    <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

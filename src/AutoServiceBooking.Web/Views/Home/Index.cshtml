@@ -1,8 +1,270 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Головна";
 }
 
-<div class="welcome-block">
-    <h1>Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<section class="hero-section" id="top">
+    <div class="hero-content">
+        <p class="hero-label">Онлайн-запис до автосервісу</p>
+        <h1>Запишіть авто на сервіс за кілька хвилин</h1>
+        <p class="hero-description">
+            Діагностика, планове ТО, гальма, шини та електроніка для різних типів авто.
+            Оберіть зручний час онлайн, а після огляду майстер підкаже точний план робіт.
+        </p>
+
+        <div class="hero-actions">
+            <a class="primary-link">Створити запис</a>
+            <a class="secondary-link" asp-controller="Account" asp-action="Login">Увійти в кабінет</a>
+        </div>
+
+        <p class="hero-note">
+            Кабінет зберігає ваші авто, історію ремонтів і діагностик, тому наступний запис займає менше часу.
+        </p>
+
+        <div class="hero-stats">
+            <div>
+                <strong>8+</strong>
+                <span>послуг</span>
+            </div>
+            <div>
+                <strong>24/7</strong>
+                <span>онлайн-заявки</span>
+            </div>
+            <div>
+                <strong>15 хв</strong>
+                <span>швидкий запис</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="garage-visual">
+        <img src="https://images.unsplash.com/photo-1487754180451-c456f719a1fc?auto=format&fit=crop&w=900&q=80" alt="Майстер ремонтує автомобіль в автосервісі" />
+
+        <div class="floating-card request-card">
+            <span>Популярна послуга</span>
+            <strong>Діагностика від 900 грн</strong>
+        </div>
+
+        <div class="floating-card master-card">
+            <span>Графік сервісу</span>
+            <strong>Пн-Сб 09:00–19:00</strong>
+        </div>
+
+        <div class="visual-summary">
+            <div>
+                <span>Перед ремонтом</span>
+                <strong>Діагностика + попередній кошторис</strong>
+            </div>
+            <span class="summary-status">Без прихованих робіт</span>
+        </div>
+    </div>
+</section>
+
+<section class="trust-section" id="benefits">
+    <article class="trust-card highlighted-trust-card">
+        <span class="trust-icon" aria-hidden="true"><i class="ph ph-receipt"></i></span>
+        <h3>Прозорий кошторис</h3>
+        <p>Спочатку огляд і пояснення проблеми, потім погодження робіт та вартості.</p>
+    </article>
+
+    <article class="trust-card">
+        <span class="trust-icon" aria-hidden="true"><i class="ph ph-gauge"></i></span>
+        <h3>Сучасна діагностика</h3>
+        <p>Перевіряємо електроніку, двигун, ходову частину й основні системи авто.</p>
+    </article>
+
+    <article class="trust-card">
+        <span class="trust-icon" aria-hidden="true"><i class="ph ph-calendar-check"></i></span>
+        <h3>Зручний запис</h3>
+        <p>Клієнт обирає послугу та час онлайн без зайвих дзвінків.</p>
+    </article>
+</section>
+
+<section class="vehicle-section">
+    <div class="section-heading compact-heading">
+        <p>Працюємо з різними авто</p>
+        <h2>Сервіс для електро, гібридних, бензинових і дизельних автомобілів</h2>
+    </div>
+
+    <div class="vehicle-cards">
+        <article class="vehicle-card">
+            <img src="https://images.unsplash.com/photo-1593941707882-a5bba14938c7?auto=format&fit=crop&w=700&q=80" alt="Електромобіль на зарядній станції" />
+            <div>
+                <h3>Електромобілі</h3>
+                <p>Діагностика електроніки, перевірка систем заряджання та планове обслуговування.</p>
+            </div>
+        </article>
+
+        <article class="vehicle-card">
+            <img src="https://images.unsplash.com/photo-1593941707874-ef25b8b4a92b?auto=format&fit=crop&w=700&q=80" alt="Plug-in hybrid автомобіль підключений до зарядного порту" />
+            <div>
+                <h3>Гібриди</h3>
+                <p>Перевірка ДВЗ, електричної частини, батареї та системи рекуперації.</p>
+            </div>
+        </article>
+
+        <article class="vehicle-card">
+            <img src="https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?auto=format&fit=crop&w=700&q=80" alt="Майстер працює з бензиновим двигуном автомобіля" />
+            <div>
+                <h3>Бензинові авто</h3>
+                <p>Заміна масла, фільтрів, діагностика двигуна та ходової частини.</p>
+            </div>
+        </article>
+
+        <article class="vehicle-card">
+            <img src="https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?auto=format&fit=crop&w=700&q=80" alt="Деталі двигуна та приводних ременів дизельного автомобіля" />
+            <div>
+                <h3>Дизельні авто</h3>
+                <p>Обслуговування паливної системи, діагностика та ремонт основних вузлів.</p>
+            </div>
+        </article>
+    </div>
+</section>
+
+<section class="section-heading">
+    <p>Особистий кабінет</p>
+    <h2>Увійдіть один раз, щоб не вводити дані авто щоразу</h2>
+</section>
+
+<section class="features-section">
+    <article class="feature-card">
+        <span class="feature-icon">01</span>
+        <h3>Збережені автомобілі</h3>
+        <p>Марка, модель, номерний знак і пробіг зберігаються в кабінеті клієнта.</p>
+    </article>
+
+    <article class="feature-card">
+        <span class="feature-icon">02</span>
+        <h3>Історія обслуговування</h3>
+        <p>Легше згадати, коли була діагностика, заміна масла або ремонт ходової.</p>
+    </article>
+
+    <article class="feature-card">
+        <span class="feature-icon">03</span>
+        <h3>Швидший наступний запис</h3>
+        <p>Не потрібно повторно заповнювати однакові дані перед кожним зверненням.</p>
+    </article>
+</section>
+
+<section class="popular-services" id="services">
+    <div class="section-heading compact-heading">
+        <p>Популярні послуги</p>
+        <h2>Найчастіші причини звернення до автосервісу</h2>
+    </div>
+
+    <div class="service-cards">
+        <article class="service-card diagnostics-card">
+            <span class="service-icon" aria-hidden="true"><i class="ph ph-cpu"></i></span>
+            <h3>Комп'ютерна діагностика</h3>
+            <p>Перевірка електронних систем та помилок автомобіля.</p>
+            <strong>від 900 грн · 40 хв</strong>
+        </article>
+
+        <article class="service-card oil-card">
+            <span class="service-icon" aria-hidden="true"><i class="ph ph-drop"></i></span>
+            <h3>Заміна масла</h3>
+            <p>Швидке технічне обслуговування двигуна та фільтрів.</p>
+            <strong>від 700 грн · 30 хв</strong>
+        </article>
+
+        <article class="service-card tires-card">
+            <span class="service-icon" aria-hidden="true"><i class="ph ph-tire"></i></span>
+            <h3>Шиномонтаж</h3>
+            <p>Заміна, балансування та сезонне обслуговування коліс.</p>
+            <strong>від 1200 грн · 60 хв</strong>
+        </article>
+
+        <article class="service-card brakes-card">
+            <span class="service-icon" aria-hidden="true"><i class="ph ph-disc"></i></span>
+            <h3>Ремонт гальм</h3>
+            <p>Огляд колодок, дисків, супортів та гальмівної рідини.</p>
+            <strong>від 1500 грн · 90 хв</strong>
+        </article>
+
+        <article class="service-card battery-card">
+            <span class="service-icon" aria-hidden="true"><i class="ph ph-battery-charging"></i></span>
+            <h3>Перевірка акумулятора</h3>
+            <p>Перевірка заряду, клем, генератора та заміна батареї.</p>
+            <strong>від 500 грн · 20 хв</strong>
+        </article>
+
+        <article class="service-card ac-card">
+            <span class="service-icon" aria-hidden="true"><i class="ph ph-snowflake"></i></span>
+            <h3>Обслуговування кондиціонера</h3>
+            <p>Діагностика, заправка та перевірка герметичності системи.</p>
+            <strong>від 1100 грн · 50 хв</strong>
+        </article>
+    </div>
+</section>
+
+<section class="workflow-section">
+    <div>
+        <p class="section-label">Як проходить сервіс</p>
+        <h2>Зрозумілий процес без зайвої бюрократії</h2>
+    </div>
+
+    <div class="workflow-list">
+        <div class="workflow-item">
+            <strong>1</strong>
+            <span>Обираєте послугу, автомобіль та зручний час в онлайн-формі.</span>
+        </div>
+
+        <div class="workflow-item">
+            <strong>2</strong>
+            <span>Приїжджаєте на огляд, майстер проводить діагностику та пояснює проблему.</span>
+        </div>
+
+        <div class="workflow-item">
+            <strong>3</strong>
+            <span>Погоджуємо вартість, виконуємо роботи й оновлюємо статус у кабінеті.</span>
+        </div>
+    </div>
+</section>
+
+<section class="reviews-section">
+    <div class="section-heading compact-heading">
+        <p>Чому водії обирають наш автосервіс?</p>
+        <h2>Справжні відгуки тих, хто цінує прозорість, швидкість та якість обслуговування.</h2>
+    </div>
+
+    <div class="review-cards">
+        <article class="review-card">
+            <p>“Записався на діагностику онлайн, приїхав у свій час. Пояснили помилки й одразу сказали вартість ремонту.”</p>
+            <strong>Андрій · Volkswagen Golf</strong>
+        </article>
+
+        <article class="review-card">
+            <p>“Робила заміну масла і перевірку ходової. Зручно, що в кабінеті видно історію звернень.”</p>
+            <strong>Марина · Toyota Corolla</strong>
+        </article>
+
+        <article class="review-card">
+            <p>“Швидко підібрали час для шиномонтажу. Без черги й зайвих дзвінків.”</p>
+            <strong>Олег · Hyundai Tucson</strong>
+        </article>
+    </div>
+</section>
+
+<section class="contact-section" id="contacts">
+    <div class="contact-content">
+        <p class="section-label">Контакти та графік</p>
+        <h2>Приїжджайте у зручний час або створіть онлайн-запис</h2>
+        <p>Адреса: м. Київ, вул. Сервісна, 15.</p>
+    </div>
+
+    <div class="contact-cards">
+        <article>
+            <span>Телефон</span>
+            <strong>+380 68 231 46 41</strong>
+        </article>
+
+        <article>
+            <span>Графік</span>
+            <strong>Пн-Сб 09:00–19:00</strong>
+        </article>
+
+        <article>
+            <span>Онлайн-запис</span>
+            <strong>Доступний 24/7</strong>
+        </article>
+    </div>
+</section>

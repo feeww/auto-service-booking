@@ -4,24 +4,26 @@
     ViewData["Title"] = "Вхід";
 }
 
-<h1>Вхід</h1>
+<section class="auth-section">
+    <h1>Вхід</h1>
 
-<div class="form-wrapper">
-    <form asp-action="Login" method="post">
-        <div asp-validation-summary="ModelOnly" class="validation-error"></div>
+    <div class="form-wrapper">
+        <form asp-action="Login" method="post">
+            <div asp-validation-summary="ModelOnly" class="validation-error"></div>
 
-        <div class="form-row">
-            <label asp-for="Email"></label>
-            <input asp-for="Email" />
-            <span asp-validation-for="Email" class="validation-error"></span>
-        </div>
+            <div class="form-row">
+                <label asp-for="Email"></label>
+                <input asp-for="Email" />
+                <span asp-validation-for="Email" class="validation-error"></span>
+            </div>
 
-        <div class="form-row">
-            <label asp-for="Password"></label>
-            <input asp-for="Password" />
-            <span asp-validation-for="Password" class="validation-error"></span>
-        </div>
+            <div class="form-row">
+                <label asp-for="Password"></label>
+                <input asp-for="Password" />
+                <span asp-validation-for="Password" class="validation-error"></span>
+            </div>
 
-        <button type="submit">Увійти</button>
-    </form>
-</div>
+            <button type="submit">Увійти</button>
+        </form>
+    </div>
+</section>

@@ -4,42 +4,44 @@
     ViewData["Title"] = "Реєстрація";
 }
 
-<h1>Реєстрація</h1>
+<section class="auth-section">
+    <h1>Реєстрація</h1>
 
-<div class="form-wrapper">
-    <form asp-action="Register" method="post">
-        <div asp-validation-summary="ModelOnly" class="validation-error"></div>
+    <div class="form-wrapper">
+        <form asp-action="Register" method="post">
+            <div asp-validation-summary="ModelOnly" class="validation-error"></div>
 
-        <div class="form-row">
-            <label asp-for="FullName"></label>
-            <input asp-for="FullName" />
-            <span asp-validation-for="FullName" class="validation-error"></span>
-        </div>
+            <div class="form-row">
+                <label asp-for="FullName"></label>
+                <input asp-for="FullName" />
+                <span asp-validation-for="FullName" class="validation-error"></span>
+            </div>
 
-        <div class="form-row">
-            <label asp-for="Email"></label>
-            <input asp-for="Email" />
-            <span asp-validation-for="Email" class="validation-error"></span>
-        </div>
+            <div class="form-row">
+                <label asp-for="Email"></label>
+                <input asp-for="Email" />
+                <span asp-validation-for="Email" class="validation-error"></span>
+            </div>
 
-        <div class="form-row">
-            <label asp-for="PhoneNumber"></label>
-            <input asp-for="PhoneNumber" />
-            <span asp-validation-for="PhoneNumber" class="validation-error"></span>
-        </div>
+            <div class="form-row">
+                <label asp-for="PhoneNumber"></label>
+                <input asp-for="PhoneNumber" />
+                <span asp-validation-for="PhoneNumber" class="validation-error"></span>
+            </div>
 
-        <div class="form-row">
-            <label asp-for="Password"></label>
-            <input asp-for="Password" />
-            <span asp-validation-for="Password" class="validation-error"></span>
-        </div>
+            <div class="form-row">
+                <label asp-for="Password"></label>
+                <input asp-for="Password" />
+                <span asp-validation-for="Password" class="validation-error"></span>
+            </div>
 
-        <div class="form-row">
-            <label asp-for="ConfirmPassword"></label>
-            <input asp-for="ConfirmPassword" />
-            <span asp-validation-for="ConfirmPassword" class="validation-error"></span>
-        </div>
+            <div class="form-row">
+                <label asp-for="ConfirmPassword"></label>
+                <input asp-for="ConfirmPassword" />
+                <span asp-validation-for="ConfirmPassword" class="validation-error"></span>
+            </div>
 
-        <button type="submit">Зареєструватися</button>
-    </form>
-</div>
+            <button type="submit">Зареєструватися</button>
+        </form>
+    </div>
+</section>

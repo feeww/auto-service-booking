@@ -2,7 +2,7 @@
 @if (User.Identity?.IsAuthenticated == true)
 {
     <li>
-        <span>Вітаю, @User.Identity?.Name!</span>
+        <span class="user-greeting">Вітаю, <strong>@User.Identity?.Name</strong>!</span>
     </li>
     <li>
         <form asp-controller="Account" asp-action="Logout" method="post">
@@ -13,10 +13,10 @@
 else
 {
     <li>
-        <a asp-controller="Account" asp-action="Register">Реєстрація</a>
+        <a class="auth-link auth-register" asp-controller="Account" asp-action="Register">Реєстрація</a>
     </li>
     <li>
-        <a asp-controller="Account" asp-action="Login">Вхід</a>
+        <a class="auth-link auth-login" asp-controller="Account" asp-action="Login">Вхід</a>
     </li>
 }
 </ul>
