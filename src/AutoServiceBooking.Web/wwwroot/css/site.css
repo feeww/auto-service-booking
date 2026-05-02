@@ -838,6 +838,16 @@ main {
     text-align: center;
 }
 
+.access-denied-card {
+    text-align: center;
+}
+
+.access-denied-card p {
+    margin: 0 0 22px;
+    color: #667085;
+    line-height: 1.65;
+}
+
 .form-row {
     margin-bottom: 16px;
 }
