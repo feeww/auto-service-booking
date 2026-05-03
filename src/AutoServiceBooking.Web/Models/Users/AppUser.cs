@@ -43,6 +43,22 @@ namespace AutoServiceBooking.Web.Models.Users
             return Role == UserRole.Admin;
         }
 
+        public void UpdateProfile(string fullName, string phoneNumber)
+        {
+            if (string.IsNullOrWhiteSpace(fullName))
+            {
+                throw new ArgumentException("Ім'я обов'язкове.", nameof(fullName));
+            }
+
+            if (string.IsNullOrWhiteSpace(phoneNumber))
+            {
+                throw new ArgumentException("Телефон обов'язковий.", nameof(phoneNumber));
+            }
+
+            FullName = fullName.Trim();
+            PhoneNumber = phoneNumber.Trim();
+        }
+
         public void UpdatePassword(string newPasswordHash)
         {
             PasswordHash = newPasswordHash;

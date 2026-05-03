@@ -93,11 +93,9 @@ a:hover {
 
 a:focus-visible,
 button:focus-visible,
-input:focus-visible,
-select:focus-visible,
-textarea:focus-visible {
-    outline: 3px solid rgba(36, 99, 199, 0.24);
-    outline-offset: 3px;
+summary:focus-visible {
+    outline: 2px solid rgba(36, 99, 199, 0.34);
+    outline-offset: 2px;
 }
 
 .logo:hover {
@@ -237,6 +235,84 @@ textarea:focus-visible {
 .logout-button i {
     font-size: 17px;
     line-height: 1;
+}
+
+.account-menu-item {
+    position: relative;
+}
+
+.account-dropdown {
+    position: relative;
+}
+
+.account-dropdown summary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    min-height: 38px;
+    padding: 9px 13px;
+    color: #184f9f;
+    background: #edf5ff;
+    border: 1px solid #d5e2f4;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: bold;
+    line-height: 1;
+    cursor: pointer;
+    list-style: none;
+}
+
+.account-dropdown summary::-webkit-details-marker {
+    display: none;
+}
+
+.account-dropdown summary::after {
+    content: "";
+    width: 6px;
+    height: 6px;
+    margin-left: 2px;
+    border-right: 1.8px solid #64748b;
+    border-bottom: 1.8px solid #64748b;
+    transform: translateY(-2px) rotate(45deg);
+}
+
+.account-dropdown[open] summary {
+    color: #0f2f5f;
+    background: #dcecff;
+    border-color: #bcd0ee;
+}
+
+.account-dropdown-panel {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    z-index: 30;
+    display: grid;
+    gap: 6px;
+    min-width: 190px;
+    padding: 10px;
+    background: white;
+    border: 1px solid var(--color-border);
+    border-radius: 16px;
+    box-shadow: 0 18px 42px rgba(31, 41, 55, 0.14);
+}
+
+.account-dropdown-panel a {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 10px 11px;
+    color: #334155;
+    border-radius: 11px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.account-dropdown-panel a:hover {
+    color: var(--color-primary-dark);
+    background: var(--color-primary-soft);
+    text-decoration: none;
 }
 
 .page {
@@ -912,6 +988,39 @@ main {
     line-height: 1.65;
 }
 
+.profile-form-wrapper {
+    max-width: 620px;
+}
+
+.profile-form-block {
+    margin-bottom: 24px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.profile-form-block:last-of-type {
+    border-bottom: none;
+}
+
+.profile-form-block h2 {
+    margin: 0 0 8px;
+    color: var(--color-heading);
+    font-size: 22px;
+}
+
+.profile-form-block > p,
+.field-note {
+    margin: 0 0 16px;
+    color: var(--color-muted);
+    font-size: 14px;
+    line-height: 1.55;
+}
+
+input[readonly] {
+    color: #64748b;
+    background: #f8fbff;
+}
+
 .form-row {
     margin-bottom: 16px;
 }
@@ -931,6 +1040,15 @@ textarea {
     border-radius: 8px;
     background: white;
     font: inherit;
+    transition: border-color 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    outline: none;
+    border-color: #8fb5f0;
+    box-shadow: 0 0 0 2px rgba(36, 99, 199, 0.10);
 }
 
 textarea {
@@ -1520,12 +1638,13 @@ button {
     font-weight: bold;
     line-height: 1.2;
     box-shadow: var(--shadow-primary);
+    transition: background-color 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
 }
 
 .primary-button:hover {
     background: var(--color-primary-dark);
     border-color: var(--color-primary-dark);
-    transform: translateY(-1px);
+    box-shadow: 0 12px 24px rgba(36, 99, 199, 0.16);
 }
 
 .saved-vehicle-badge {
@@ -1673,10 +1792,16 @@ footer {
     }
 
     .nav-cabinet-link,
+    .account-dropdown summary,
     .logout-button {
         min-height: 36px;
         padding: 8px 11px;
         font-size: 13px;
+    }
+
+    .account-dropdown-panel {
+        right: auto;
+        left: 0;
     }
 
     .hero-section,
@@ -1772,6 +1897,7 @@ footer {
 
     .auth-link,
     .nav-cabinet-link,
+    .account-dropdown summary,
     .logout-button {
         min-height: 34px;
         padding: 7px 10px;
@@ -1779,6 +1905,7 @@ footer {
     }
 
     .nav-cabinet-link i,
+    .account-dropdown summary i,
     .logout-button i {
         font-size: 15px;
     }

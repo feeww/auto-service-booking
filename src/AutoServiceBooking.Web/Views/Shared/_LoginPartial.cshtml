@@ -4,36 +4,44 @@
     <li>
         <span class="user-greeting">Вітаю, <strong>@User.Identity?.Name</strong>!</span>
     </li>
-    @if (User.IsInRole("Admin"))
-    {
-        <li>
-            <a class="nav-cabinet-link" asp-controller="Bookings" asp-action="Admin">
-                <i class="ph ph-clipboard-text" aria-hidden="true"></i>
-                <span>Заявки</span>
-            </a>
-        </li>
-        <li>
-            <a class="nav-cabinet-link" asp-controller="AutoServices" asp-action="Index">
-                <i class="ph ph-wrench" aria-hidden="true"></i>
-                <span>Послуги</span>
-            </a>
-        </li>
-    }
-    else
-    {
-        <li>
-            <a class="nav-cabinet-link" asp-controller="Bookings" asp-action="Index">
-                <i class="ph ph-calendar-check" aria-hidden="true"></i>
-                <span>Мої записи</span>
-            </a>
-        </li>
-        <li>
-            <a class="nav-cabinet-link" asp-controller="Vehicles" asp-action="Index">
-                <i class="ph ph-car" aria-hidden="true"></i>
-                <span>Мої авто</span>
-            </a>
-        </li>
-    }
+    <li class="account-menu-item">
+        <details class="account-dropdown">
+            <summary>
+                <i class="ph ph-squares-four" aria-hidden="true"></i>
+                <span>Кабінет</span>
+            </summary>
+
+            <div class="account-dropdown-panel">
+                <a asp-controller="Account" asp-action="Profile">
+                    <i class="ph ph-user-circle" aria-hidden="true"></i>
+                    <span>Профіль</span>
+                </a>
+
+                @if (User.IsInRole("Admin"))
+                {
+                    <a asp-controller="Bookings" asp-action="Admin">
+                        <i class="ph ph-clipboard-text" aria-hidden="true"></i>
+                        <span>Заявки</span>
+                    </a>
+                    <a asp-controller="AutoServices" asp-action="Index">
+                        <i class="ph ph-wrench" aria-hidden="true"></i>
+                        <span>Послуги</span>
+                    </a>
+                }
+                else
+                {
+                    <a asp-controller="Bookings" asp-action="Index">
+                        <i class="ph ph-calendar-check" aria-hidden="true"></i>
+                        <span>Мої записи</span>
+                    </a>
+                    <a asp-controller="Vehicles" asp-action="Index">
+                        <i class="ph ph-car" aria-hidden="true"></i>
+                        <span>Мої авто</span>
+                    </a>
+                }
+            </div>
+        </details>
+    </li>
     <li>
         <form asp-controller="Account" asp-action="Logout" method="post">
             <button type="submit" class="logout-button">

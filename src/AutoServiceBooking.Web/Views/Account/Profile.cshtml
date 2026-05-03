@@ -1,0 +1,70 @@
+@model AutoServiceBooking.Web.ViewModels.ProfileViewModel
+
+@{
+    ViewData["Title"] = "Профіль";
+}
+
+<section class="auth-section profile-section">
+    <h1>Профіль</h1>
+
+    @if (TempData["SuccessMessage"] is string successMessage)
+    {
+        <div class="alert-message success-message">@successMessage</div>
+    }
+
+    <div class="form-wrapper profile-form-wrapper">
+        <form asp-action="Profile" method="post">
+            <div asp-validation-summary="ModelOnly" class="validation-error"></div>
+
+            <section class="profile-form-block">
+                <h2>Контактні дані</h2>
+
+                <div class="form-row">
+                    <label asp-for="FullName"></label>
+                    <input asp-for="FullName" placeholder="Наприклад, Іван Петренко" />
+                    <span asp-validation-for="FullName" class="validation-error"></span>
+                </div>
+
+                <div class="form-row">
+                    <label asp-for="Email"></label>
+                    <input asp-for="Email" readonly />
+                    <p class="field-note">Email змінити не можна. Він використовується для входу в акаунт.</p>
+                </div>
+
+                <div class="form-row">
+                    <label asp-for="PhoneNumber"></label>
+                    <input asp-for="PhoneNumber" placeholder="+380671234567" />
+                    <span asp-validation-for="PhoneNumber" class="validation-error"></span>
+                </div>
+            </section>
+
+            <section class="profile-form-block">
+                <h2>Зміна пароля</h2>
+                <p>Заповнюйте ці поля тільки якщо хочете змінити пароль.</p>
+
+                <div class="form-row">
+                    <label asp-for="CurrentPassword"></label>
+                    <input asp-for="CurrentPassword" />
+                    <span asp-validation-for="CurrentPassword" class="validation-error"></span>
+                </div>
+
+                <div class="form-row">
+                    <label asp-for="NewPassword"></label>
+                    <input asp-for="NewPassword" placeholder="Мінімум 8 символів, літери та цифри" />
+                    <span asp-validation-for="NewPassword" class="validation-error"></span>
+                </div>
+
+                <div class="form-row">
+                    <label asp-for="ConfirmNewPassword"></label>
+                    <input asp-for="ConfirmNewPassword" />
+                    <span asp-validation-for="ConfirmNewPassword" class="validation-error"></span>
+                </div>
+            </section>
+
+            <div class="form-actions">
+                <button class="primary-button" type="submit">Зберегти зміни</button>
+                <a class="secondary-link" asp-controller="Home" asp-action="Index">На головну</a>
+            </div>
+        </form>
+    </div>
+</section>
