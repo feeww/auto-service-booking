@@ -1667,6 +1667,37 @@ button {
     padding: 14px 22px;
 }
 
+.booking-filter-form {
+    display: grid;
+    grid-template-columns: minmax(240px, 1fr) 220px auto;
+    gap: 14px;
+    align-items: end;
+    margin: 0 0 22px;
+    padding: 16px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 18px;
+    box-shadow: var(--shadow-soft);
+}
+
+.booking-filter-field label {
+    margin-bottom: 6px;
+    color: var(--color-heading);
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.booking-filter-actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    min-height: 42px;
+}
+
+.booking-filter-actions .action-button {
+    min-height: 42px;
+}
+
 .booking-info-card {
     position: sticky;
     top: 104px;
@@ -1836,6 +1867,7 @@ footer {
     .contact-section,
     .contact-cards,
     .booking-layout,
+    .booking-filter-form,
     .booking-list-card,
     .admin-service-card,
     .booking-details-grid,

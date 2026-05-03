@@ -1,4 +1,4 @@
-@model List<AutoServiceBooking.Web.ViewModels.BookingListItemViewModel>
+@model AutoServiceBooking.Web.ViewModels.BookingListPageViewModel
 
 @{
     ViewData["Title"] = "Заявки клієнтів";
@@ -23,17 +23,59 @@
         <div class="alert-message error-message">@errorMessage</div>
     }
 
-    @if (!Model.Any())
+    <form class="booking-filter-form" method="get">
+        <div class="booking-filter-field">
+            <label for="search">Пошук</label>
+            <input id="search" name="search" value="@Model.Search" placeholder="Номер, клієнт, телефон, email або авто" />
+        </div>
+
+        <div class="booking-filter-field">
+            <label for="status">Статус</label>
+            <select id="status" name="status">
+                <option value="">Усі статуси</option>
+                @foreach (var option in Model.StatusOptions)
+                {
+                    if (Model.Status?.ToString() == option.Value)
+                    {
+                        <option value="@option.Value" selected>@option.Text</option>
+                    }
+                    else
+                    {
+                        <option value="@option.Value">@option.Text</option>
+                    }
+                }
+            </select>
+        </div>
+
+        <div class="booking-filter-actions">
+            <button class="action-button action-primary" type="submit">Знайти</button>
+            @if (Model.HasFilters)
+            {
+                <a class="secondary-link" asp-action="Admin">Скинути</a>
+            }
+        </div>
+    </form>
+
+    @if (!Model.Bookings.Any())
     {
         <div class="empty-state">
-            <h2>Заявок поки немає</h2>
-            <p>Нові онлайн-записи клієнтів з'являться на цій сторінці.</p>
+            @if (Model.HasFilters)
+            {
+                <h2>Заявок не знайдено</h2>
+                <p>Спробуйте змінити пошук або скинути фільтри.</p>
+                <a class="primary-link" asp-action="Admin">Скинути фільтри</a>
+            }
+            else
+            {
+                <h2>Заявок поки немає</h2>
+                <p>Нові онлайн-записи клієнтів з'являться на цій сторінці.</p>
+            }
         </div>
     }
     else
     {
         <div class="booking-list admin-booking-list">
-            @foreach (var booking in Model)
+            @foreach (var booking in Model.Bookings)
             {
                 <article class="booking-list-card admin-booking-card">
                     <div class="booking-card-main">

@@ -10,17 +10,19 @@ namespace AutoServiceBooking.Web.Controllers
     {
         [HttpGet]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Admin()
+        public async Task<IActionResult> Admin(string? search, BookingStatus? status)
         {
-            List<Booking> bookings = await _dbContext.Bookings
+            IQueryable<Booking> query = _dbContext.Bookings
                 .Include(booking => booking.AutoService)
-                .Include(booking => booking.Vehicle)
+                .Include(booking => booking.Vehicle);
+
+            query = ApplyBookingFilters(query, search, status, true);
+
+            List<Booking> bookings = await query
                 .OrderByDescending(booking => booking.CreatedAt)
                 .ToListAsync();
 
-            List<BookingListItemViewModel> model = bookings
-                .Select(booking => CreateBookingListItem(booking, true))
-                .ToList();
+            BookingListPageViewModel model = CreateBookingListPage(bookings, search, status, true);
 
             return View(model);
         }

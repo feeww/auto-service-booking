@@ -12,7 +12,7 @@ namespace AutoServiceBooking.Web.Controllers
     {
         [HttpGet]
         [Authorize]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string? search, BookingStatus? status)
         {
             if (User.IsInRole(UserRole.Admin.ToString()))
             {
@@ -20,16 +20,18 @@ namespace AutoServiceBooking.Web.Controllers
             }
 
             int clientUserId = User.GetUserId();
-            List<Booking> bookings = await _dbContext.Bookings
+            IQueryable<Booking> query = _dbContext.Bookings
                 .Include(booking => booking.AutoService)
                 .Include(booking => booking.Vehicle)
-                .Where(booking => booking.ClientUserId == clientUserId)
+                .Where(booking => booking.ClientUserId == clientUserId);
+
+            query = ApplyBookingFilters(query, search, status, false);
+
+            List<Booking> bookings = await query
                 .OrderByDescending(booking => booking.CreatedAt)
                 .ToListAsync();
 
-            List<BookingListItemViewModel> model = bookings
-                .Select(booking => CreateBookingListItem(booking, false))
-                .ToList();
+            BookingListPageViewModel model = CreateBookingListPage(bookings, search, status, false);
 
             return View(model);
         }

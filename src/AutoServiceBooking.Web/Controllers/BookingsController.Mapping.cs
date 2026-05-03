@@ -1,11 +1,71 @@
 using AutoServiceBooking.Web.Extensions;
 using AutoServiceBooking.Web.Models;
 using AutoServiceBooking.Web.ViewModels;
+using Microsoft.EntityFrameworkCore;
 
 namespace AutoServiceBooking.Web.Controllers
 {
     public partial class BookingsController
     {
+        private BookingListPageViewModel CreateBookingListPage(
+            List<Booking> bookings,
+            string? search,
+            BookingStatus? status,
+            bool isAdminView)
+        {
+            return new BookingListPageViewModel
+            {
+                Bookings = bookings
+                    .Select(booking => CreateBookingListItem(booking, isAdminView))
+                    .ToList(),
+                Search = search,
+                Status = status,
+                StatusOptions = Enum.GetValues<BookingStatus>()
+                    .Select(currentStatus => new BookingStatusOptionViewModel
+                    {
+                        Value = currentStatus.ToString(),
+                        Text = currentStatus.GetDisplayName()
+                    })
+                    .ToList()
+            };
+        }
+
+        private static IQueryable<Booking> ApplyBookingFilters(
+            IQueryable<Booking> query,
+            string? search,
+            BookingStatus? status,
+            bool includeCustomerFields)
+        {
+            if (status.HasValue)
+            {
+                query = query.Where(booking => booking.Status == status.Value);
+            }
+
+            if (string.IsNullOrWhiteSpace(search))
+            {
+                return query;
+            }
+
+            string searchTerm = $"%{search.Trim()}%";
+            bool isNumber = int.TryParse(search.Trim(), out int bookingId);
+
+            query = query.Where(booking =>
+                (isNumber && booking.Id == bookingId) ||
+                EF.Functions.ILike(booking.AutoService.Name, searchTerm) ||
+                (booking.ProblemDescription != null && EF.Functions.ILike(booking.ProblemDescription, searchTerm)) ||
+                (booking.Vehicle != null && EF.Functions.ILike(booking.Vehicle.Make, searchTerm)) ||
+                (booking.Vehicle != null && EF.Functions.ILike(booking.Vehicle.Model, searchTerm)) ||
+                (booking.Vehicle != null && EF.Functions.ILike(booking.Vehicle.LicensePlate, searchTerm)) ||
+                (booking.GuestVehicleMake != null && EF.Functions.ILike(booking.GuestVehicleMake, searchTerm)) ||
+                (booking.GuestVehicleModel != null && EF.Functions.ILike(booking.GuestVehicleModel, searchTerm)) ||
+                (booking.GuestVehicleLicensePlate != null && EF.Functions.ILike(booking.GuestVehicleLicensePlate, searchTerm)) ||
+                (includeCustomerFields && EF.Functions.ILike(booking.CustomerName, searchTerm)) ||
+                (includeCustomerFields && EF.Functions.ILike(booking.CustomerPhone, searchTerm)) ||
+                (includeCustomerFields && booking.CustomerEmail != null && EF.Functions.ILike(booking.CustomerEmail, searchTerm)));
+
+            return query;
+        }
+
         private static BookingListItemViewModel CreateBookingListItem(Booking booking, bool isAdminView)
         {
             return new BookingListItemViewModel
