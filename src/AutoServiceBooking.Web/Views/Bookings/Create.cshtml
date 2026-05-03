@@ -1,0 +1,183 @@
+@model AutoServiceBooking.Web.ViewModels.BookingCreateViewModel
+
+@{
+    ViewData["Title"] = "Створити запис";
+    string scheduledAtValue = Model.ScheduledAt.ToString("yyyy-MM-ddTHH:mm");
+    bool isSavedVehicleSelected = Model.SelectedVehicleId.HasValue;
+}
+
+<section class="booking-page">
+    <div class="booking-hero">
+        <p class="section-label">Онлайн-запис</p>
+        <h1>Запишіть авто на сервіс</h1>
+        <p>
+            Заповніть коротку форму, оберіть послугу та зручний час. Менеджер перевірить заявку
+            і зв'яжеться з вами для підтвердження.
+        </p>
+    </div>
+
+    <div class="booking-layout">
+        <form class="booking-form" asp-action="Create" method="post">
+            <div asp-validation-summary="ModelOnly" class="validation-error"></div>
+
+            <section class="booking-form-card">
+                <div class="form-card-heading">
+                    <span>1</span>
+                    <div>
+                        <h2>Контактні дані</h2>
+                        <p>За цими даними сервіс підтвердить ваш запис.</p>
+                    </div>
+                </div>
+
+                <div class="form-grid two-columns">
+                    <div class="form-row">
+                        <label asp-for="CustomerName"></label>
+                        <input asp-for="CustomerName" placeholder="Наприклад, Іван Петренко" />
+                        <span asp-validation-for="CustomerName" class="validation-error"></span>
+                    </div>
+
+                    <div class="form-row">
+                        <label asp-for="CustomerPhone"></label>
+                        <input asp-for="CustomerPhone" placeholder="+380671234567" />
+                        <span asp-validation-for="CustomerPhone" class="validation-error"></span>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <label asp-for="CustomerEmail"></label>
+                    <input asp-for="CustomerEmail" placeholder="name@example.com" />
+                    <span asp-validation-for="CustomerEmail" class="validation-error"></span>
+                </div>
+            </section>
+
+            <section class="booking-form-card">
+                <div class="form-card-heading">
+                    <span>2</span>
+                    <div>
+                        <h2>Автомобіль</h2>
+                        <p>Авторизовані клієнти можуть обрати збережене авто або додати нове.</p>
+                    </div>
+                </div>
+
+                @if (Model.IsAuthenticatedUser && Model.SavedVehicleOptions.Any())
+                {
+                    <div class="form-row saved-vehicle-row">
+                        <label asp-for="SelectedVehicleId"></label>
+                        <select asp-for="SelectedVehicleId" asp-items="Model.SavedVehicleOptions" data-saved-vehicle-select>
+                            <option value="">Додати нове авто в цьому записі</option>
+                        </select>
+                        <span asp-validation-for="SelectedVehicleId" class="validation-error"></span>
+                    </div>
+
+                    <div class="saved-vehicle-preview" data-saved-vehicle-preview>
+                        @foreach (var vehicle in Model.SavedVehicles)
+                        {
+                            <article class="saved-vehicle-preview-card @(Model.SelectedVehicleId == vehicle.Id ? string.Empty : "is-hidden")" data-saved-vehicle-card="@vehicle.Id">
+                                <div>
+                                    <span class="vehicle-plate">@vehicle.LicensePlate</span>
+                                    <h3>@vehicle.Make @vehicle.Model</h3>
+                                    <p>@vehicle.Year рік · @vehicle.FuelTypeName · @vehicle.Mileage км</p>
+                                </div>
+                                <span class="saved-vehicle-badge">Буде використано для запису</span>
+                            </article>
+                        }
+                    </div>
+                }
+
+                <div class="form-grid two-columns @(isSavedVehicleSelected ? "is-hidden" : string.Empty)" data-new-vehicle-fields>
+                    <div class="form-row">
+                        <label asp-for="VehicleMake"></label>
+                        <input asp-for="VehicleMake" placeholder="Наприклад, Toyota" />
+                        <span asp-validation-for="VehicleMake" class="validation-error"></span>
+                    </div>
+
+                    <div class="form-row">
+                        <label asp-for="VehicleModel"></label>
+                        <input asp-for="VehicleModel" placeholder="Наприклад, Corolla" />
+                        <span asp-validation-for="VehicleModel" class="validation-error"></span>
+                    </div>
+
+                    <div class="form-row">
+                        <label asp-for="VehicleYear"></label>
+                        <input asp-for="VehicleYear" min="1900" max="@(DateTime.UtcNow.Year + 1)" />
+                        <span asp-validation-for="VehicleYear" class="validation-error"></span>
+                    </div>
+
+                    <div class="form-row">
+                        <label asp-for="VehicleLicensePlate"></label>
+                        <input asp-for="VehicleLicensePlate" placeholder="Наприклад, AA1234BB" />
+                        <span asp-validation-for="VehicleLicensePlate" class="validation-error"></span>
+                    </div>
+
+                    <div class="form-row">
+                        <label asp-for="VehicleMileage"></label>
+                        <input asp-for="VehicleMileage" min="0" />
+                        <span asp-validation-for="VehicleMileage" class="validation-error"></span>
+                    </div>
+
+                    <div class="form-row">
+                        <label asp-for="VehicleFuelType"></label>
+                        <select asp-for="VehicleFuelType" asp-items="Html.GetEnumSelectList<AutoServiceBooking.Web.Models.VehicleFuelType>()"></select>
+                        <span asp-validation-for="VehicleFuelType" class="validation-error"></span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="booking-form-card">
+                <div class="form-card-heading">
+                    <span>3</span>
+                    <div>
+                        <h2>Послуга та час</h2>
+                        <p>Ціна у списку є орієнтовною. Фінальну суму майстер погодить після огляду.</p>
+                    </div>
+                </div>
+
+                <div class="form-grid two-columns">
+                    <div class="form-row">
+                        <label asp-for="AutoServiceId"></label>
+                        <select asp-for="AutoServiceId" asp-items="Model.AutoServiceOptions">
+                            <option value="">Оберіть послугу</option>
+                        </select>
+                        <span asp-validation-for="AutoServiceId" class="validation-error"></span>
+                    </div>
+
+                    <div class="form-row">
+                        <label asp-for="ScheduledAt"></label>
+                        <input asp-for="ScheduledAt" type="datetime-local" value="@scheduledAtValue" />
+                        <span asp-validation-for="ScheduledAt" class="validation-error"></span>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <label asp-for="ProblemDescription"></label>
+                    <textarea asp-for="ProblemDescription" rows="4" placeholder="Коротко опишіть проблему або побажання"></textarea>
+                    <span asp-validation-for="ProblemDescription" class="validation-error"></span>
+                </div>
+            </section>
+
+            <div class="booking-actions">
+                <button class="primary-button" type="submit">Надіслати заявку</button>
+                <a class="secondary-link" asp-controller="Home" asp-action="Index">Повернутися на головну</a>
+            </div>
+        </form>
+
+        <aside class="booking-info-card">
+            <span class="booking-info-icon" aria-hidden="true"><i class="ph ph-calendar-check"></i></span>
+            <h2>Що буде далі?</h2>
+            <ul>
+                <li>Ми перевіримо доступний час.</li>
+                <li>Менеджер підтвердить запис телефоном.</li>
+                <li>Після огляду майстер назве точну вартість.</li>
+            </ul>
+
+            @if (!Model.IsAuthenticatedUser)
+            {
+                <div class="booking-account-note">
+                    <strong>Маєте акаунт?</strong>
+                    <p>Увійдіть, щоб використати збережені авто та швидше створювати наступні записи.</p>
+                    <a asp-controller="Account" asp-action="Login">Увійти в кабінет</a>
+                </div>
+            }
+        </aside>
+    </div>
+</section>

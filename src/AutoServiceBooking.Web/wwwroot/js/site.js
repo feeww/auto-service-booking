@@ -34,3 +34,27 @@
     window.addEventListener('hashchange', updateActiveLink);
     updateActiveLink();
 })();
+
+(() => {
+    const savedVehicleSelect = document.querySelector('[data-saved-vehicle-select]');
+    const newVehicleFields = document.querySelector('[data-new-vehicle-fields]');
+    const savedVehicleCards = Array.from(document.querySelectorAll('[data-saved-vehicle-card]'));
+
+    if (!savedVehicleSelect || !newVehicleFields) {
+        return;
+    }
+
+    const toggleVehicleFields = () => {
+        const selectedVehicleId = savedVehicleSelect.value;
+        const hasSelectedVehicle = selectedVehicleId !== '';
+
+        newVehicleFields.classList.toggle('is-hidden', hasSelectedVehicle);
+
+        savedVehicleCards.forEach((card) => {
+            card.classList.toggle('is-hidden', card.dataset.savedVehicleCard !== selectedVehicleId);
+        });
+    };
+
+    savedVehicleSelect.addEventListener('change', toggleVehicleFields);
+    toggleVehicleFields();
+})();

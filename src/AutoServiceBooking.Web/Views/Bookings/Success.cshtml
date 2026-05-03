@@ -1,0 +1,16 @@
+@{
+    ViewData["Title"] = "Запис створено";
+}
+
+<section class="booking-success-section">
+    <div class="booking-success-card">
+        <span class="success-icon" aria-hidden="true"><i class="ph ph-check-circle"></i></span>
+        <h1>Запис створено</h1>
+        <p>@(TempData["SuccessMessage"] ?? "Дякуємо! Ми отримали вашу заявку і скоро зв'яжемося з вами.")</p>
+
+        <div class="form-actions success-actions">
+            <a class="primary-link" asp-controller="Home" asp-action="Index">На головну</a>
+            <a class="secondary-link" asp-controller="Bookings" asp-action="Create">Створити ще один запис</a>
+        </div>
+    </div>
+</section>

@@ -12,8 +12,11 @@
         </p>
 
         <div class="hero-actions">
-            <a class="primary-link">Створити запис</a>
-            <a class="secondary-link" asp-controller="Account" asp-action="Login">Увійти в кабінет</a>
+            <a class="primary-link" asp-controller="Bookings" asp-action="Create">Створити запис</a>
+            @if (User.Identity?.IsAuthenticated != true)
+            {
+                <a class="secondary-link" asp-controller="Account" asp-action="Login">Увійти в кабінет</a>
+            }
         </div>
 
         <p class="hero-note">

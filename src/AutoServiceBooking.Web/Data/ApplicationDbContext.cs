@@ -84,6 +84,13 @@ namespace AutoServiceBooking.Web.Data
                 entity.HasKey(booking => booking.Id);
 
                 entity.Property(booking => booking.ProblemDescription).HasMaxLength(1000);
+                entity.Property(booking => booking.CustomerName).HasMaxLength(100).IsRequired();
+                entity.Property(booking => booking.CustomerPhone).HasMaxLength(30).IsRequired();
+                entity.Property(booking => booking.CustomerEmail).HasMaxLength(100);
+                entity.Property(booking => booking.GuestVehicleMake).HasMaxLength(60);
+                entity.Property(booking => booking.GuestVehicleModel).HasMaxLength(60);
+                entity.Property(booking => booking.GuestVehicleLicensePlate).HasMaxLength(20);
+                entity.Property(booking => booking.GuestVehicleFuelType).HasConversion<string>().HasMaxLength(20);
                 entity.Property(booking => booking.FinalPrice).HasColumnType("numeric(10,2)");
                 entity.Property(booking => booking.AdminComment).HasMaxLength(1000);
                 entity.Property(booking => booking.Status).HasConversion<string>().HasMaxLength(30).IsRequired();
@@ -92,7 +99,7 @@ namespace AutoServiceBooking.Web.Data
                 entity.HasOne(booking => booking.ClientUser)
                     .WithMany(client => client.Bookings)
                     .HasForeignKey(booking => booking.ClientUserId)
-                    .OnDelete(DeleteBehavior.Cascade);
+                    .OnDelete(DeleteBehavior.SetNull);
 
                 entity.HasOne(booking => booking.Vehicle)
                     .WithMany(vehicle => vehicle.Bookings)

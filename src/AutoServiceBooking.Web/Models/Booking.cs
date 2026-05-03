@@ -9,27 +9,72 @@ namespace AutoServiceBooking.Web.Models
         {
         }
 
-        public Booking(int clientUserId, int vehicleId, int autoServiceId, DateTime scheduledAt, string? problemDescription)
+        public Booking(
+            int clientUserId,
+            int vehicleId,
+            int autoServiceId,
+            DateTime scheduledAt,
+            string? problemDescription,
+            string customerName,
+            string customerPhone,
+            string? customerEmail)
         {
-            Validate(clientUserId, vehicleId, autoServiceId, scheduledAt);
+            ValidateLinkedBooking(clientUserId, vehicleId, autoServiceId, scheduledAt);
+            ValidateCustomer(customerName, customerPhone);
 
             ClientUserId = clientUserId;
             VehicleId = vehicleId;
             AutoServiceId = autoServiceId;
             ScheduledAt = scheduledAt;
             ProblemDescription = problemDescription?.Trim();
+            CustomerName = customerName.Trim();
+            CustomerPhone = customerPhone.Trim();
+            CustomerEmail = customerEmail?.Trim();
+            Status = BookingStatus.Pending;
+        }
+
+        public Booking(
+            int autoServiceId,
+            DateTime scheduledAt,
+            string? problemDescription,
+            string customerName,
+            string customerPhone,
+            string? customerEmail,
+            string vehicleMake,
+            string vehicleModel,
+            int vehicleYear,
+            string vehicleLicensePlate,
+            int vehicleMileage,
+            VehicleFuelType vehicleFuelType)
+        {
+            ValidateCore(autoServiceId, scheduledAt);
+            ValidateCustomer(customerName, customerPhone);
+            ValidateGuestVehicle(vehicleMake, vehicleModel, vehicleYear, vehicleLicensePlate, vehicleMileage);
+
+            AutoServiceId = autoServiceId;
+            ScheduledAt = scheduledAt;
+            ProblemDescription = problemDescription?.Trim();
+            CustomerName = customerName.Trim();
+            CustomerPhone = customerPhone.Trim();
+            CustomerEmail = customerEmail?.Trim();
+            GuestVehicleMake = vehicleMake.Trim();
+            GuestVehicleModel = vehicleModel.Trim();
+            GuestVehicleYear = vehicleYear;
+            GuestVehicleLicensePlate = vehicleLicensePlate.Trim().ToUpperInvariant();
+            GuestVehicleMileage = vehicleMileage;
+            GuestVehicleFuelType = vehicleFuelType;
             Status = BookingStatus.Pending;
         }
 
         public int Id { get; private set; }
 
-        public int ClientUserId { get; private set; }
+        public int? ClientUserId { get; private set; }
 
-        public ClientUser ClientUser { get; private set; } = null!;
+        public ClientUser? ClientUser { get; private set; }
 
-        public int VehicleId { get; private set; }
+        public int? VehicleId { get; private set; }
 
-        public Vehicle Vehicle { get; private set; } = null!;
+        public Vehicle? Vehicle { get; private set; }
 
         public int AutoServiceId { get; private set; }
 
@@ -39,6 +84,33 @@ namespace AutoServiceBooking.Web.Models
 
         [StringLength(1000)]
         public string? ProblemDescription { get; private set; }
+
+        [Required]
+        [StringLength(100)]
+        public string CustomerName { get; private set; } = string.Empty;
+
+        [Required]
+        [StringLength(30)]
+        public string CustomerPhone { get; private set; } = string.Empty;
+
+        [EmailAddress]
+        [StringLength(100)]
+        public string? CustomerEmail { get; private set; }
+
+        [StringLength(60)]
+        public string? GuestVehicleMake { get; private set; }
+
+        [StringLength(60)]
+        public string? GuestVehicleModel { get; private set; }
+
+        public int? GuestVehicleYear { get; private set; }
+
+        [StringLength(20)]
+        public string? GuestVehicleLicensePlate { get; private set; }
+
+        public int? GuestVehicleMileage { get; private set; }
+
+        public VehicleFuelType? GuestVehicleFuelType { get; private set; }
 
         public decimal? FinalPrice { get; private set; }
 
@@ -58,7 +130,12 @@ namespace AutoServiceBooking.Web.Models
                 throw new InvalidOperationException("Редагувати можна тільки записи зі статусом 'Очікує'.");
             }
 
-            Validate(ClientUserId, vehicleId, autoServiceId, scheduledAt);
+            if (ClientUserId == null)
+            {
+                throw new InvalidOperationException("Гостьовий запис не можна редагувати як запис збереженого авто.");
+            }
+
+            ValidateLinkedBooking(ClientUserId.Value, vehicleId, autoServiceId, scheduledAt);
 
             VehicleId = vehicleId;
             AutoServiceId = autoServiceId;
@@ -144,7 +221,7 @@ namespace AutoServiceBooking.Web.Models
             Status = BookingStatus.Cancelled;
         }
 
-        private static void Validate(int clientUserId, int vehicleId, int autoServiceId, DateTime scheduledAt)
+        private static void ValidateLinkedBooking(int clientUserId, int vehicleId, int autoServiceId, DateTime scheduledAt)
         {
             if (clientUserId <= 0)
             {
@@ -156,6 +233,11 @@ namespace AutoServiceBooking.Web.Models
                 throw new ArgumentException("Автомобіль обов'язковий.", nameof(vehicleId));
             }
 
+            ValidateCore(autoServiceId, scheduledAt);
+        }
+
+        private static void ValidateCore(int autoServiceId, DateTime scheduledAt)
+        {
             if (autoServiceId <= 0)
             {
                 throw new ArgumentException("Послуга обов'язкова.", nameof(autoServiceId));
@@ -164,6 +246,47 @@ namespace AutoServiceBooking.Web.Models
             if (scheduledAt == default)
             {
                 throw new ArgumentException("Дата та час запису обов'язкові.", nameof(scheduledAt));
+            }
+        }
+
+        private static void ValidateCustomer(string customerName, string customerPhone)
+        {
+            if (string.IsNullOrWhiteSpace(customerName))
+            {
+                throw new ArgumentException("Ім'я клієнта обов'язкове.", nameof(customerName));
+            }
+
+            if (string.IsNullOrWhiteSpace(customerPhone))
+            {
+                throw new ArgumentException("Телефон клієнта обов'язковий.", nameof(customerPhone));
+            }
+        }
+
+        private static void ValidateGuestVehicle(string make, string model, int year, string licensePlate, int mileage)
+        {
+            if (string.IsNullOrWhiteSpace(make))
+            {
+                throw new ArgumentException("Марка автомобіля обов'язкова.", nameof(make));
+            }
+
+            if (string.IsNullOrWhiteSpace(model))
+            {
+                throw new ArgumentException("Модель автомобіля обов'язкова.", nameof(model));
+            }
+
+            if (year < 1900 || year > DateTime.UtcNow.Year + 1)
+            {
+                throw new ArgumentException("Рік випуску автомобіля некоректний.", nameof(year));
+            }
+
+            if (string.IsNullOrWhiteSpace(licensePlate))
+            {
+                throw new ArgumentException("Номерний знак обов'язковий.", nameof(licensePlate));
+            }
+
+            if (mileage < 0)
+            {
+                throw new ArgumentException("Пробіг не може бути від'ємним.", nameof(mileage));
             }
         }
     }
