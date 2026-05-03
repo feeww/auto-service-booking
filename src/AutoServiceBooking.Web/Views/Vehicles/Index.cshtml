@@ -1,7 +1,27 @@
-@model IReadOnlyCollection<AutoServiceBooking.Web.ViewModels.VehicleListItemViewModel>
+@model AutoServiceBooking.Web.ViewModels.VehicleIndexViewModel
 
 @{
     ViewData["Title"] = "Мої автомобілі";
+
+    string GetBookingsText(int count)
+    {
+        if (count == 0)
+        {
+            return "Немає записів";
+        }
+
+        int lastTwoDigits = count % 100;
+        int lastDigit = count % 10;
+        string word = lastTwoDigits is >= 11 and <= 14
+            ? "записів"
+            : lastDigit == 1
+                ? "запис"
+                : lastDigit is >= 2 and <= 4
+                    ? "записи"
+                    : "записів";
+
+        return $"{count} {word} в історії";
+    }
 }
 
 <section class="cabinet-section">
@@ -25,20 +45,37 @@
         <div class="alert-message error-message">@TempData["ErrorMessage"]</div>
     }
 
-    @if (!Model.Any())
+    <nav class="vehicle-tabs" aria-label="Фільтр автомобілів">
+        <a class="vehicle-tab @(Model.ShowArchived ? string.Empty : "active")" asp-action="Index" asp-route-tab="active">
+            Активні авто <span>@Model.ActiveCount</span>
+        </a>
+        <a class="vehicle-tab @(Model.ShowArchived ? "active" : string.Empty)" asp-action="Index" asp-route-tab="archive">
+            Архів <span>@Model.ArchivedCount</span>
+        </a>
+    </nav>
+
+    @if (!Model.Vehicles.Any())
     {
         <div class="empty-state">
-            <h2>Автомобілів ще немає</h2>
-            <p>Додайте перше авто: марку, модель, номерний знак, пробіг і тип пального.</p>
-            <a class="primary-link" asp-action="Create">Додати автомобіль</a>
+            @if (Model.ShowArchived)
+            {
+                <h2>Архів порожній</h2>
+                <p>Сюди потрапляють авто, які вже не використовуються для нових записів, але мають історію сервісу.</p>
+            }
+            else
+            {
+                <h2>Автомобілів ще немає</h2>
+                <p>Додайте перше авто: марку, модель, номерний знак, пробіг і тип пального.</p>
+                <a class="primary-link" asp-action="Create">Додати автомобіль</a>
+            }
         </div>
     }
     else
     {
         <div class="vehicle-list">
-            @foreach (var vehicle in Model)
+            @foreach (var vehicle in Model.Vehicles)
             {
-                <article class="vehicle-list-card">
+                <article class="vehicle-list-card @(vehicle.IsArchived ? "vehicle-archived-card" : string.Empty)">
                     <div>
                         <span class="vehicle-plate">@vehicle.LicensePlate</span>
                         <h2>@vehicle.Make @vehicle.Model</h2>
@@ -46,12 +83,21 @@
                     </div>
 
                     <div class="vehicle-meta">
-                        <span>Записів: @vehicle.BookingsCount</span>
+                        <span>@GetBookingsText(vehicle.BookingsCount)</span>
                     </div>
 
                     <div class="card-actions">
-                        <a asp-action="Edit" asp-route-id="@vehicle.Id">Редагувати</a>
-                        <a class="danger-link" asp-action="Delete" asp-route-id="@vehicle.Id">Видалити</a>
+                        @if (vehicle.IsArchived)
+                        {
+                            <form asp-action="Restore" asp-route-id="@vehicle.Id" method="post">
+                                <button class="link-action-button" type="submit">Повернути</button>
+                            </form>
+                        }
+                        else
+                        {
+                            <a asp-action="Edit" asp-route-id="@vehicle.Id">Редагувати</a>
+                            <a class="danger-link" asp-action="Delete" asp-route-id="@vehicle.Id">@(vehicle.BookingsCount > 0 ? "В архів" : "Видалити")</a>
+                        }
                     </div>
                 </article>
             }

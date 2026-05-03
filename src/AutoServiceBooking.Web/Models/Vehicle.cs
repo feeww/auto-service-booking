@@ -46,6 +46,8 @@ namespace AutoServiceBooking.Web.Models
 
         public VehicleFuelType FuelType { get; private set; }
 
+        public bool IsArchived { get; private set; }
+
         public DateTime CreatedAt { get; private set; } = DateTime.UtcNow;
 
         public ICollection<Booking> Bookings { get; private set; } = new List<Booking>();
@@ -60,6 +62,16 @@ namespace AutoServiceBooking.Web.Models
             LicensePlate = licensePlate.Trim().ToUpperInvariant();
             Mileage = mileage;
             FuelType = fuelType;
+        }
+
+        public void Archive()
+        {
+            IsArchived = true;
+        }
+
+        public void Restore()
+        {
+            IsArchived = false;
         }
 
         private static void Validate(string make, string model, int year, string licensePlate, int mileage)

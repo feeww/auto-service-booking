@@ -19,12 +19,14 @@ namespace AutoServiceBooking.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string tab = "active")
         {
             int clientUserId = User.GetUserId();
+            bool showArchived = tab == "archive";
 
             List<VehicleListItemViewModel> vehicles = await _dbContext.Vehicles
                 .Where(vehicle => vehicle.ClientUserId == clientUserId)
+                .Where(vehicle => vehicle.IsArchived == showArchived)
                 .OrderByDescending(vehicle => vehicle.CreatedAt)
                 .Select(vehicle => new VehicleListItemViewModel
                 {
@@ -35,7 +37,8 @@ namespace AutoServiceBooking.Web.Controllers
                     LicensePlate = vehicle.LicensePlate,
                     Mileage = vehicle.Mileage,
                     FuelType = vehicle.FuelType,
-                    BookingsCount = vehicle.Bookings.Count
+                    BookingsCount = vehicle.Bookings.Count,
+                    IsArchived = vehicle.IsArchived
                 })
                 .ToListAsync();
 
@@ -44,7 +47,15 @@ namespace AutoServiceBooking.Web.Controllers
                 vehicle.FuelTypeName = vehicle.FuelType.GetDisplayName();
             }
 
-            return View(vehicles);
+            VehicleIndexViewModel model = new VehicleIndexViewModel
+            {
+                Vehicles = vehicles,
+                ActiveCount = await _dbContext.Vehicles.CountAsync(vehicle => vehicle.ClientUserId == clientUserId && !vehicle.IsArchived),
+                ArchivedCount = await _dbContext.Vehicles.CountAsync(vehicle => vehicle.ClientUserId == clientUserId && vehicle.IsArchived),
+                ShowArchived = showArchived
+            };
+
+            return View(model);
         }
 
         [HttpGet]
@@ -152,7 +163,8 @@ namespace AutoServiceBooking.Web.Controllers
                 Mileage = vehicle.Mileage,
                 FuelType = vehicle.FuelType,
                 FuelTypeName = vehicle.FuelType.GetDisplayName(),
-                BookingsCount = await _dbContext.Bookings.CountAsync(booking => booking.VehicleId == vehicle.Id)
+                BookingsCount = await _dbContext.Bookings.CountAsync(booking => booking.VehicleId == vehicle.Id),
+                IsArchived = vehicle.IsArchived
             };
 
             return View(model);
@@ -174,8 +186,11 @@ namespace AutoServiceBooking.Web.Controllers
 
             if (hasBookings)
             {
-                TempData["ErrorMessage"] = "Неможливо видалити автомобіль, бо для нього вже є записи на сервіс.";
-                return RedirectToAction(nameof(Index));
+                vehicle.Archive();
+                await _dbContext.SaveChangesAsync();
+
+                TempData["SuccessMessage"] = "Автомобіль перенесено в архів. Старі записи залишились в історії.";
+                return RedirectToAction(nameof(Index), new { tab = "archive" });
             }
 
             _dbContext.Vehicles.Remove(vehicle);
@@ -183,6 +198,24 @@ namespace AutoServiceBooking.Web.Controllers
 
             TempData["SuccessMessage"] = "Автомобіль видалено.";
             return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Restore(int id)
+        {
+            Vehicle? vehicle = await FindOwnVehicleAsync(id);
+
+            if (vehicle == null)
+            {
+                return NotFound();
+            }
+
+            vehicle.Restore();
+            await _dbContext.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "Автомобіль повернено до гаража.";
+            return RedirectToAction(nameof(Index), new { tab = "active" });
         }
 
         private async Task<Vehicle?> FindOwnVehicleAsync(int id)

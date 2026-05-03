@@ -70,6 +70,7 @@ namespace AutoServiceBooking.Web.Data
                 entity.Property(vehicle => vehicle.Year).IsRequired();
                 entity.Property(vehicle => vehicle.Mileage).IsRequired();
                 entity.Property(vehicle => vehicle.FuelType).HasConversion<string>().HasMaxLength(20).IsRequired();
+                entity.Property(vehicle => vehicle.IsArchived).IsRequired().HasDefaultValue(false);
 
                 entity.HasOne(vehicle => vehicle.ClientUser)
                     .WithMany(client => client.Vehicles)

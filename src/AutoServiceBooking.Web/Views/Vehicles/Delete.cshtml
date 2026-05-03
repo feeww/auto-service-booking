@@ -1,25 +1,42 @@
 @model AutoServiceBooking.Web.ViewModels.VehicleListItemViewModel
 
 @{
-    ViewData["Title"] = "Видалити автомобіль";
+    bool willArchive = Model.BookingsCount > 0;
+    ViewData["Title"] = willArchive ? "Перенести автомобіль в архів" : "Видалити автомобіль";
 }
 
 <section class="auth-section cabinet-form-section">
-    <h1>Видалити автомобіль</h1>
+    <h1>@ViewData["Title"]</h1>
 
     <div class="form-wrapper delete-card">
-        <p>Ви дійсно хочете видалити цей автомобіль?</p>
+        <p>
+            @if (willArchive)
+            {
+                <text>Для цього авто вже є записи на сервіс, тому його не можна видалити назавжди. Можна перенести авто в архів — воно зникне зі списку активних авто для нових записів, але історія залишиться.</text>
+            }
+            else
+            {
+                <text>Ви дійсно хочете видалити цей автомобіль?</text>
+            }
+        </p>
 
         <div class="delete-summary">
             <strong>@Model.Make @Model.Model</strong>
             <span>@Model.Year рік · @Model.LicensePlate · @Model.FuelTypeName</span>
         </div>
 
-        @if (Model.BookingsCount > 0)
+        @if (willArchive)
         {
-            <div class="alert-message error-message">
-                Для цього автомобіля вже є записи на сервіс, тому його не можна видалити.
+            <div class="alert-message warning-message">
+                Авто буде перенесено в архів. Його можна буде повернути назад у будь-який момент.
             </div>
+
+            <form asp-action="Delete" asp-route-id="@Model.Id" method="post">
+                <div class="form-actions">
+                    <button class="danger-button" type="submit">Перенести в архів</button>
+                    <a class="secondary-link" asp-action="Index">Скасувати</a>
+                </div>
+            </form>
         }
         else
         {

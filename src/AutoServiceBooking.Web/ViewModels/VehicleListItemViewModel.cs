@@ -21,5 +21,7 @@ namespace AutoServiceBooking.Web.ViewModels
         public string FuelTypeName { get; set; } = string.Empty;
 
         public int BookingsCount { get; set; }
+
+        public bool IsArchived { get; set; }
     }
 }

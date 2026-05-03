@@ -79,11 +79,14 @@ namespace AutoServiceBooking.Web.Controllers
             if (formModel.SelectedVehicleId.HasValue)
             {
                 Vehicle? savedVehicle = await _dbContext.Vehicles
-                    .FirstOrDefaultAsync(vehicle => vehicle.Id == formModel.SelectedVehicleId.Value && vehicle.ClientUserId == clientUserId);
+                    .FirstOrDefaultAsync(vehicle =>
+                        vehicle.Id == formModel.SelectedVehicleId.Value &&
+                        vehicle.ClientUserId == clientUserId &&
+                        !vehicle.IsArchived);
 
                 if (savedVehicle == null)
                 {
-                    ModelState.AddModelError(nameof(formModel.SelectedVehicleId), "Оберіть власний автомобіль зі списку.");
+                    ModelState.AddModelError(nameof(formModel.SelectedVehicleId), "Оберіть активний автомобіль зі списку.");
                     return false;
                 }
 
@@ -199,7 +202,7 @@ namespace AutoServiceBooking.Web.Controllers
 
             int clientUserId = User.GetUserId();
             List<Vehicle> savedVehicles = await _dbContext.Vehicles
-                .Where(vehicle => vehicle.ClientUserId == clientUserId)
+                .Where(vehicle => vehicle.ClientUserId == clientUserId && !vehicle.IsArchived)
                 .OrderByDescending(vehicle => vehicle.CreatedAt)
                 .ToListAsync();
 
