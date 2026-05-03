@@ -175,6 +175,51 @@ input:focus-visible {
     background: #f5f8fc;
 }
 
+.nav-cabinet-link,
+.logout-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    min-height: 38px;
+    padding: 9px 13px;
+    border: 1px solid #d5e2f4;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: bold;
+    line-height: 1;
+}
+
+.nav-cabinet-link {
+    color: #184f9f;
+    background: #edf5ff;
+}
+
+.nav-cabinet-link:hover {
+    color: #0f2f5f;
+    background: #dcecff;
+    border-color: #bcd0ee;
+    text-decoration: none;
+}
+
+.logout-button {
+    color: #64748b;
+    background: white;
+    cursor: pointer;
+}
+
+.logout-button:hover {
+    color: #b91c1c;
+    background: #fff7f7;
+    border-color: #fecaca;
+}
+
+.nav-cabinet-link i,
+.logout-button i {
+    font-size: 17px;
+    line-height: 1;
+}
+
 .page {
     width: 100%;
     max-width: none;
@@ -857,12 +902,14 @@ label {
     margin-bottom: 6px;
 }
 
-input {
+input,
+select {
     width: 100%;
     box-sizing: border-box;
     padding: 10px;
     border: 1px solid #c9d3df;
     border-radius: 8px;
+    background: white;
 }
 
 button {
@@ -893,6 +940,160 @@ button {
 .validation-error {
     color: #b00020;
     font-size: 14px;
+}
+
+.cabinet-section {
+    width: min(1320px, calc(100% - 96px));
+    margin: 0 auto;
+}
+
+.cabinet-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 24px;
+    align-items: flex-start;
+    margin-bottom: 24px;
+}
+
+.cabinet-header h1 {
+    margin: 0;
+    color: #111827;
+    font-size: 38px;
+    letter-spacing: -0.03em;
+}
+
+.cabinet-header p:last-child {
+    max-width: 620px;
+    margin: 12px 0 0;
+    color: #667085;
+    line-height: 1.65;
+}
+
+.alert-message {
+    margin-bottom: 18px;
+    padding: 14px 16px;
+    border-radius: 14px;
+    line-height: 1.5;
+}
+
+.success-message {
+    color: #166534;
+    background: #dcfce7;
+    border: 1px solid #bbf7d0;
+}
+
+.error-message {
+    color: #991b1b;
+    background: #fee2e2;
+    border: 1px solid #fecaca;
+}
+
+.empty-state {
+    padding: 34px;
+    text-align: center;
+    background: white;
+    border: 1px solid #e6ebf2;
+    border-radius: 22px;
+    box-shadow: 0 12px 32px rgba(31, 41, 55, 0.06);
+}
+
+.empty-state h2 {
+    margin: 0 0 10px;
+}
+
+.empty-state p {
+    margin: 0 auto 22px;
+    max-width: 520px;
+    color: #667085;
+    line-height: 1.65;
+}
+
+.vehicle-list {
+    display: grid;
+    gap: 16px;
+}
+
+.vehicle-list-card {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: 18px;
+    align-items: center;
+    padding: 22px;
+    background: white;
+    border: 1px solid #e6ebf2;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(31, 41, 55, 0.05);
+}
+
+.vehicle-plate {
+    display: inline-block;
+    margin-bottom: 8px;
+    padding: 6px 10px;
+    color: #184f9f;
+    background: #edf5ff;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.vehicle-list-card h2 {
+    margin: 0 0 6px;
+    color: #111827;
+    font-size: 22px;
+}
+
+.vehicle-list-card p,
+.vehicle-meta {
+    margin: 0;
+    color: #667085;
+}
+
+.card-actions,
+.form-actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.card-actions a {
+    font-weight: bold;
+}
+
+.danger-link {
+    color: #b91c1c;
+}
+
+.danger-button {
+    background: #dc2626;
+}
+
+.danger-button:hover {
+    background: #b91c1c;
+}
+
+.cabinet-form-section .form-wrapper {
+    margin: 0 auto;
+}
+
+.delete-card p {
+    margin: 0 0 18px;
+    color: #465465;
+    line-height: 1.6;
+}
+
+.delete-summary {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 18px;
+    padding: 16px;
+    background: #f8fbff;
+    border: 1px solid #e6ebf2;
+    border-radius: 14px;
+}
+
+.delete-summary span {
+    color: #667085;
 }
 
 footer {
@@ -952,6 +1153,19 @@ footer {
     .contact-section {
         width: min(100% - 32px, 1320px);
         padding: 28px;
+    }
+
+    .cabinet-section {
+        width: min(100% - 32px, 1320px);
+    }
+
+    .cabinet-header,
+    .vehicle-list-card,
+    .card-actions,
+    .form-actions {
+        grid-template-columns: 1fr;
+        flex-direction: column;
+        align-items: flex-start;
     }
 
     .garage-visual,

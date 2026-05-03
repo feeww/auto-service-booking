@@ -1,0 +1,57 @@
+@model AutoServiceBooking.Web.ViewModels.VehicleFormViewModel
+
+@{
+    ViewData["Title"] = "Редагувати автомобіль";
+}
+
+<section class="auth-section cabinet-form-section">
+    <h1>Редагувати автомобіль</h1>
+
+    <div class="form-wrapper">
+        <form asp-action="Edit" asp-route-id="@Model.Id" method="post">
+            <input asp-for="Id" type="hidden" />
+            <div asp-validation-summary="ModelOnly" class="validation-error"></div>
+
+            <div class="form-row">
+                <label asp-for="Make"></label>
+                <input asp-for="Make" />
+                <span asp-validation-for="Make" class="validation-error"></span>
+            </div>
+
+            <div class="form-row">
+                <label asp-for="Model"></label>
+                <input asp-for="Model" />
+                <span asp-validation-for="Model" class="validation-error"></span>
+            </div>
+
+            <div class="form-row">
+                <label asp-for="Year"></label>
+                <input asp-for="Year" />
+                <span asp-validation-for="Year" class="validation-error"></span>
+            </div>
+
+            <div class="form-row">
+                <label asp-for="LicensePlate"></label>
+                <input asp-for="LicensePlate" />
+                <span asp-validation-for="LicensePlate" class="validation-error"></span>
+            </div>
+
+            <div class="form-row">
+                <label asp-for="Mileage"></label>
+                <input asp-for="Mileage" />
+                <span asp-validation-for="Mileage" class="validation-error"></span>
+            </div>
+
+            <div class="form-row">
+                <label asp-for="FuelType"></label>
+                <select asp-for="FuelType" asp-items="Html.GetEnumSelectList<AutoServiceBooking.Web.Models.VehicleFuelType>()"></select>
+                <span asp-validation-for="FuelType" class="validation-error"></span>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit">Зберегти зміни</button>
+                <a class="secondary-link" asp-action="Index">Скасувати</a>
+            </div>
+        </form>
+    </div>
+</section>

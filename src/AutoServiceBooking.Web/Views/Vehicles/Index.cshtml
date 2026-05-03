@@ -1,0 +1,60 @@
+@model IReadOnlyCollection<AutoServiceBooking.Web.ViewModels.VehicleListItemViewModel>
+
+@{
+    ViewData["Title"] = "Мої автомобілі";
+}
+
+<section class="cabinet-section">
+    <div class="cabinet-header">
+        <div>
+            <p class="section-label">Особистий кабінет</p>
+            <h1>Мої автомобілі</h1>
+            <p>Збережіть авто один раз, щоб швидше створювати записи на сервіс.</p>
+        </div>
+
+        <a class="primary-link" asp-action="Create">Додати автомобіль</a>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert-message success-message">@TempData["SuccessMessage"]</div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert-message error-message">@TempData["ErrorMessage"]</div>
+    }
+
+    @if (!Model.Any())
+    {
+        <div class="empty-state">
+            <h2>Автомобілів ще немає</h2>
+            <p>Додайте перше авто: марку, модель, номерний знак, пробіг і тип пального.</p>
+            <a class="primary-link" asp-action="Create">Додати автомобіль</a>
+        </div>
+    }
+    else
+    {
+        <div class="vehicle-list">
+            @foreach (var vehicle in Model)
+            {
+                <article class="vehicle-list-card">
+                    <div>
+                        <span class="vehicle-plate">@vehicle.LicensePlate</span>
+                        <h2>@vehicle.Make @vehicle.Model</h2>
+                        <p>@vehicle.Year рік · @vehicle.FuelTypeName · @vehicle.Mileage км</p>
+                    </div>
+
+                    <div class="vehicle-meta">
+                        <span>Записів: @vehicle.BookingsCount</span>
+                    </div>
+
+                    <div class="card-actions">
+                        <a asp-action="Edit" asp-route-id="@vehicle.Id">Редагувати</a>
+                        <a class="danger-link" asp-action="Delete" asp-route-id="@vehicle.Id">Видалити</a>
+                    </div>
+                </article>
+            }
+        </div>
+    }
+</section>

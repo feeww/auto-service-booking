@@ -1,0 +1,34 @@
+@model AutoServiceBooking.Web.ViewModels.VehicleListItemViewModel
+
+@{
+    ViewData["Title"] = "Видалити автомобіль";
+}
+
+<section class="auth-section cabinet-form-section">
+    <h1>Видалити автомобіль</h1>
+
+    <div class="form-wrapper delete-card">
+        <p>Ви дійсно хочете видалити цей автомобіль?</p>
+
+        <div class="delete-summary">
+            <strong>@Model.Make @Model.Model</strong>
+            <span>@Model.Year рік · @Model.LicensePlate · @Model.FuelTypeName</span>
+        </div>
+
+        @if (Model.BookingsCount > 0)
+        {
+            <div class="alert-message error-message">
+                Для цього автомобіля вже є записи на сервіс, тому його не можна видалити.
+            </div>
+        }
+        else
+        {
+            <form asp-action="Delete" asp-route-id="@Model.Id" method="post">
+                <div class="form-actions">
+                    <button class="danger-button" type="submit">Так, видалити</button>
+                    <a class="secondary-link" asp-action="Index">Скасувати</a>
+                </div>
+            </form>
+        }
+    </div>
+</section>
