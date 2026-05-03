@@ -1,0 +1,82 @@
+@model List<AutoServiceBooking.Web.ViewModels.AutoServiceListItemViewModel>
+
+@{
+    ViewData["Title"] = "Послуги сервісу";
+}
+
+<section class="cabinet-section">
+    <div class="cabinet-header">
+        <div>
+            <p class="section-label">Адмін-панель</p>
+            <h1>Послуги сервісу</h1>
+            <p>Керуйте послугами, які клієнти бачать у формі онлайн-запису.</p>
+        </div>
+
+        <a class="primary-link" asp-action="Create">Додати послугу</a>
+    </div>
+
+    @if (TempData["SuccessMessage"] is string successMessage)
+    {
+        <div class="alert-message success-message">@successMessage</div>
+    }
+
+    @if (TempData["ErrorMessage"] is string errorMessage)
+    {
+        <div class="alert-message error-message">@errorMessage</div>
+    }
+
+    @if (!Model.Any())
+    {
+        <div class="empty-state">
+            <h2>Послуг ще немає</h2>
+            <p>Додайте першу послугу, щоб клієнти могли обрати її під час запису.</p>
+            <a class="primary-link" asp-action="Create">Додати послугу</a>
+        </div>
+    }
+    else
+    {
+        <div class="admin-service-list">
+            @foreach (var service in Model)
+            {
+                <article class="admin-service-card">
+                    <div>
+                        <div class="booking-meta-line">
+                            <span class="booking-number">Послуга #@service.DisplayNumber</span>
+                            <span class="booking-status @(service.IsActive ? "status-completed" : "status-cancelled")">
+                                @(service.IsActive ? "Активна" : "Прихована")
+                            </span>
+                        </div>
+
+                        <h2>@service.Name</h2>
+                        <p>@service.Description</p>
+
+                        <dl class="service-admin-meta">
+                            <div>
+                                <dt>Ціна</dt>
+                                <dd>@(service.Price == 0 ? "За домовленістю" : $"від {service.Price:0} грн")</dd>
+                            </div>
+                            <div>
+                                <dt>Тривалість</dt>
+                                <dd>@service.DurationMinutes хв</dd>
+                            </div>
+                            <div>
+                                <dt>Записів</dt>
+                                <dd>@service.BookingsCount</dd>
+                            </div>
+                        </dl>
+                    </div>
+
+                    <div class="admin-booking-actions service-actions">
+                        <a class="action-button action-primary" asp-action="Edit" asp-route-id="@service.Id">Редагувати</a>
+                        <form asp-action="ToggleActive" asp-route-id="@service.Id" method="post">
+                            <button class="action-button @(service.IsActive ? "action-danger" : "action-primary")" type="submit">
+                                @(service.IsActive ? "Приховати" : "Активувати")
+                            </button>
+                        </form>
+                        <a class="action-button action-danger" asp-action="Delete" asp-route-id="@service.Id">Видалити</a>
+                    </div>
+                </article>
+            }
+        </div>
+    }
+</section>

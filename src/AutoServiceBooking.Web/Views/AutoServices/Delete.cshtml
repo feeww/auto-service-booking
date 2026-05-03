@@ -1,0 +1,42 @@
+@model AutoServiceBooking.Web.ViewModels.AutoServiceListItemViewModel
+
+@{
+    ViewData["Title"] = "Видалити послугу";
+}
+
+<section class="auth-section cabinet-form-section">
+    <h1>Видалити послугу</h1>
+
+    <div class="form-wrapper delete-card">
+        @if (Model.BookingsCount > 0)
+        {
+            <p>
+                Послугу <strong>@Model.Name</strong> не можна видалити, бо для неї вже є записи.
+                Щоб клієнти більше не бачили її у формі, краще приховати послугу.
+            </p>
+        }
+        else
+        {
+            <p>Ви впевнені, що хочете видалити послугу <strong>@Model.Name</strong>?</p>
+        }
+
+        <div class="delete-summary">
+            <strong>@Model.Name</strong>
+            <span>@Model.Description</span>
+            <span>@(Model.Price == 0 ? "Ціна: за домовленістю" : $"Ціна: від {Model.Price:0} грн")</span>
+            <span>Тривалість: @Model.DurationMinutes хв</span>
+            <span>Записів: @Model.BookingsCount</span>
+        </div>
+
+        <div class="form-actions">
+            @if (Model.BookingsCount == 0)
+            {
+                <form asp-action="Delete" asp-route-id="@Model.Id" method="post">
+                    <button class="action-button action-danger" type="submit">Видалити</button>
+                </form>
+            }
+
+            <a class="secondary-link" asp-action="Index">Повернутися</a>
+        </div>
+    </div>
+</section>

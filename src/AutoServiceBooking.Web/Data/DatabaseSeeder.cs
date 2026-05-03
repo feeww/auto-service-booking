@@ -12,6 +12,11 @@ namespace AutoServiceBooking.Web.Data
 
         private static async Task SeedAutoServicesAsync(ApplicationDbContext dbContext)
         {
+            if (await dbContext.AutoServices.AnyAsync())
+            {
+                return;
+            }
+
             List<AutoService> services = new List<AutoService>
             {
                 new AutoService(

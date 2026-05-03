@@ -1,0 +1,45 @@
+@model AutoServiceBooking.Web.ViewModels.AutoServiceFormViewModel
+
+@{
+    ViewData["Title"] = "Редагувати послугу";
+}
+
+<section class="auth-section cabinet-form-section">
+    <h1>Редагувати послугу</h1>
+
+    <div class="form-wrapper">
+        <form asp-action="Edit" asp-route-id="@Model.Id" method="post">
+            <input asp-for="Id" type="hidden" />
+            <div asp-validation-summary="ModelOnly" class="validation-error"></div>
+
+            <div class="form-row">
+                <label asp-for="Name"></label>
+                <input asp-for="Name" />
+                <span asp-validation-for="Name" class="validation-error"></span>
+            </div>
+
+            <div class="form-row">
+                <label asp-for="Description"></label>
+                <textarea asp-for="Description" rows="4"></textarea>
+                <span asp-validation-for="Description" class="validation-error"></span>
+            </div>
+
+            <div class="form-row">
+                <label asp-for="Price"></label>
+                <input asp-for="Price" min="0" step="0.01" />
+                <span asp-validation-for="Price" class="validation-error"></span>
+            </div>
+
+            <div class="form-row">
+                <label asp-for="DurationMinutes"></label>
+                <input asp-for="DurationMinutes" min="1" />
+                <span asp-validation-for="DurationMinutes" class="validation-error"></span>
+            </div>
+
+            <div class="form-actions">
+                <button class="primary-button" type="submit">Зберегти</button>
+                <a class="secondary-link" asp-action="Index">Скасувати</a>
+            </div>
+        </form>
+    </div>
+</section>

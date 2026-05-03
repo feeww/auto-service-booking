@@ -1267,6 +1267,9 @@ button {
 }
 
 .action-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     width: 100%;
     min-height: 42px;
     padding: 10px 16px;
@@ -1275,7 +1278,13 @@ button {
     font-size: 14px;
     font-weight: bold;
     line-height: 1.1;
+    text-align: center;
+    text-decoration: none;
     box-shadow: none;
+}
+
+.action-button:hover {
+    text-decoration: none;
 }
 
 .action-primary {
@@ -1315,6 +1324,58 @@ button {
     background: var(--color-surface-soft);
     border: 1px solid var(--color-border);
     border-radius: 16px;
+}
+
+.admin-service-list {
+    display: grid;
+    gap: 18px;
+}
+
+.admin-service-card {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 22px;
+    align-items: flex-start;
+    padding: 24px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-card);
+}
+
+.admin-service-card h2 {
+    margin: 8px 0 10px;
+    color: var(--color-heading);
+    font-size: 24px;
+}
+
+.admin-service-card p {
+    max-width: 760px;
+    margin: 0;
+    color: var(--color-muted);
+    line-height: 1.6;
+}
+
+.service-admin-meta {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+    margin: 18px 0 0;
+}
+
+.service-admin-meta dt {
+    margin-bottom: 5px;
+    color: #7a8797;
+    font-size: 13px;
+}
+
+.service-admin-meta dd {
+    margin: 0;
+    color: #334155;
+}
+
+.service-actions {
+    min-width: 150px;
 }
 
 .booking-page {
@@ -1651,8 +1712,10 @@ footer {
     .contact-cards,
     .booking-layout,
     .booking-list-card,
+    .admin-service-card,
     .booking-details-grid,
     .admin-details-grid,
+    .service-admin-meta,
     .two-columns {
         grid-template-columns: 1fr;
     }
