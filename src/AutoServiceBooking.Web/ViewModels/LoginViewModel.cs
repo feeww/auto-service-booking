@@ -6,6 +6,7 @@ namespace AutoServiceBooking.Web.ViewModels
     {
         [Required(ErrorMessage = "Вкажіть email")]
         [EmailAddress(ErrorMessage = "Некоректний email")]
+        [StringLength(100, ErrorMessage = "Email може містити максимум 100 символів")]
         public string Email { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Вкажіть пароль")]

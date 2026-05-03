@@ -13,25 +13,25 @@
 
             <div class="form-row">
                 <label asp-for="FullName"></label>
-                <input asp-for="FullName" />
+                <input asp-for="FullName" placeholder="Наприклад, Іван Петренко" />
                 <span asp-validation-for="FullName" class="validation-error"></span>
             </div>
 
             <div class="form-row">
                 <label asp-for="Email"></label>
-                <input asp-for="Email" />
+                <input asp-for="Email" placeholder="name@example.com" />
                 <span asp-validation-for="Email" class="validation-error"></span>
             </div>
 
             <div class="form-row">
                 <label asp-for="PhoneNumber"></label>
-                <input asp-for="PhoneNumber" />
+                <input asp-for="PhoneNumber" placeholder="+380671234567" />
                 <span asp-validation-for="PhoneNumber" class="validation-error"></span>
             </div>
 
             <div class="form-row">
                 <label asp-for="Password"></label>
-                <input asp-for="Password" />
+                <input asp-for="Password" placeholder="Мінімум 8 символів, літери та цифри" />
                 <span asp-validation-for="Password" class="validation-error"></span>
             </div>
 
@@ -41,7 +41,7 @@
                 <span asp-validation-for="ConfirmPassword" class="validation-error"></span>
             </div>
 
-            <button type="submit">Зареєструватися</button>
+            <button class="primary-button" type="submit">Зареєструватися</button>
         </form>
     </div>
 </section>

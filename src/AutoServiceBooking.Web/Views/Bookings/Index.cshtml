@@ -1,0 +1,93 @@
+@model List<AutoServiceBooking.Web.ViewModels.BookingListItemViewModel>
+
+@{
+    ViewData["Title"] = "Мої записи";
+}
+
+<section class="cabinet-section">
+    <div class="cabinet-header">
+        <div>
+            <p class="section-label">Кабінет клієнта</p>
+            <h1>Мої записи</h1>
+            <p>Тут відображаються ваші онлайн-заявки, статуси робіт і фінальна вартість після завершення ремонту.</p>
+        </div>
+
+        <a class="primary-link" asp-controller="Bookings" asp-action="Create">Створити запис</a>
+    </div>
+
+    @if (TempData["SuccessMessage"] is string successMessage)
+    {
+        <div class="alert-message success-message">@successMessage</div>
+    }
+
+    @if (TempData["ErrorMessage"] is string errorMessage)
+    {
+        <div class="alert-message error-message">@errorMessage</div>
+    }
+
+    @if (!Model.Any())
+    {
+        <div class="empty-state">
+            <h2>Записів ще немає</h2>
+            <p>Створіть перший запис, щоб сервіс міг підготуватися до вашого візиту.</p>
+            <a class="primary-link" asp-controller="Bookings" asp-action="Create">Створити запис</a>
+        </div>
+    }
+    else
+    {
+        <div class="booking-list">
+            @foreach (var booking in Model)
+            {
+                <article class="booking-list-card">
+                    <div class="booking-card-main">
+                        <div class="booking-card-title-row">
+                            <div>
+                                <div class="booking-meta-line">
+                                    <span class="booking-number">Запис #@booking.Id</span>
+                                    <span class="booking-status @booking.StatusCssClass">@booking.StatusName</span>
+                                </div>
+                                <h2>@booking.AutoServiceName</h2>
+                            </div>
+                        </div>
+
+                        <dl class="booking-details-grid">
+                            <div>
+                                <dt>Дата та час</dt>
+                                <dd>@booking.ScheduledAt.ToString("dd.MM.yyyy HH:mm")</dd>
+                            </div>
+                            <div>
+                                <dt>Авто</dt>
+                                <dd>@booking.VehicleTitle</dd>
+                            </div>
+                            <div>
+                                <dt>Заявку створено</dt>
+                                <dd>@booking.CreatedAt.ToString("dd.MM.yyyy HH:mm")</dd>
+                            </div>
+                            <div>
+                                <dt>Фінальна ціна</dt>
+                                <dd>@(booking.FinalPrice.HasValue ? $"{booking.FinalPrice:0} грн" : "Ще не визначено")</dd>
+                            </div>
+                        </dl>
+
+                        @if (!string.IsNullOrWhiteSpace(booking.ProblemDescription))
+                        {
+                            <p class="booking-description">@booking.ProblemDescription</p>
+                        }
+
+                        @if (!string.IsNullOrWhiteSpace(booking.AdminComment))
+                        {
+                            <p class="booking-admin-comment"><strong>Коментар сервісу:</strong> @booking.AdminComment</p>
+                        }
+                    </div>
+
+                    @if (booking.CanCancel)
+                    {
+                        <form asp-controller="Bookings" asp-action="Cancel" asp-route-id="@booking.Id" method="post">
+                            <button class="action-button action-danger" type="submit">Скасувати</button>
+                        </form>
+                    }
+                </article>
+            }
+        </div>
+    }
+</section>

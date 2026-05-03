@@ -4,12 +4,30 @@
     <li>
         <span class="user-greeting">Вітаю, <strong>@User.Identity?.Name</strong>!</span>
     </li>
-    <li>
-        <a class="nav-cabinet-link" asp-controller="Vehicles" asp-action="Index">
-            <i class="ph ph-car" aria-hidden="true"></i>
-            <span>Мої авто</span>
-        </a>
-    </li>
+    @if (User.IsInRole("Admin"))
+    {
+        <li>
+            <a class="nav-cabinet-link" asp-controller="Bookings" asp-action="Admin">
+                <i class="ph ph-clipboard-text" aria-hidden="true"></i>
+                <span>Заявки</span>
+            </a>
+        </li>
+    }
+    else
+    {
+        <li>
+            <a class="nav-cabinet-link" asp-controller="Bookings" asp-action="Index">
+                <i class="ph ph-calendar-check" aria-hidden="true"></i>
+                <span>Мої записи</span>
+            </a>
+        </li>
+        <li>
+            <a class="nav-cabinet-link" asp-controller="Vehicles" asp-action="Index">
+                <i class="ph ph-car" aria-hidden="true"></i>
+                <span>Мої авто</span>
+            </a>
+        </li>
+    }
     <li>
         <form asp-controller="Account" asp-action="Logout" method="post">
             <button type="submit" class="logout-button">
