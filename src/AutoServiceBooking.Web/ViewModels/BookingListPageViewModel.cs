@@ -7,7 +7,9 @@ namespace AutoServiceBooking.Web.ViewModels
         public List<BookingListItemViewModel> Bookings { get; set; } = new();
         public string? Search { get; set; }
         public BookingStatus? Status { get; set; }
+        public string Sort { get; set; } = "nearest";
         public List<BookingStatusOptionViewModel> StatusOptions { get; set; } = new();
+        public List<BookingSortOptionViewModel> SortOptions { get; set; } = new();
         public int Page { get; set; } = 1;
         public int PageSize { get; set; } = 5;
         public int TotalItems { get; set; }
@@ -20,6 +22,13 @@ namespace AutoServiceBooking.Web.ViewModels
     }
 
     public class BookingStatusOptionViewModel
+    {
+        public string Value { get; set; } = string.Empty;
+
+        public string Text { get; set; } = string.Empty;
+    }
+
+    public class BookingSortOptionViewModel
     {
         public string Value { get; set; } = string.Empty;
 

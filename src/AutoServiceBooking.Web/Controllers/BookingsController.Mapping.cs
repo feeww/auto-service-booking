@@ -13,10 +13,13 @@ namespace AutoServiceBooking.Web.Controllers
             List<Booking> bookings,
             string? search,
             BookingStatus? status,
+            string sort,
             bool isAdminView,
             int page,
             int totalItems)
         {
+            string selectedSort = NormalizeSort(sort);
+
             return new BookingListPageViewModel
             {
                 Bookings = bookings
@@ -24,6 +27,7 @@ namespace AutoServiceBooking.Web.Controllers
                     .ToList(),
                 Search = search,
                 Status = status,
+                Sort = selectedSort,
                 Page = page,
                 PageSize = BookingPageSize,
                 TotalItems = totalItems,
@@ -34,8 +38,51 @@ namespace AutoServiceBooking.Web.Controllers
                         Value = currentStatus.ToString(),
                         Text = currentStatus.GetDisplayName()
                     })
-                    .ToList()
+                    .ToList(),
+                SortOptions = new List<BookingSortOptionViewModel>
+                {
+                    new BookingSortOptionViewModel { Value = "nearest", Text = "Найближчі активні" },
+                    new BookingSortOptionViewModel { Value = "date", Text = "Найближча дата" },
+                    new BookingSortOptionViewModel { Value = "newest", Text = "Нові заявки спочатку" }
+                }
             };
+        }
+
+        private static IOrderedQueryable<Booking> ApplyBookingSort(IQueryable<Booking> query, string sort)
+        {
+            string selectedSort = NormalizeSort(sort);
+
+            if (selectedSort == "newest")
+            {
+                return query
+                    .OrderBy(booking => booking.Status == BookingStatus.Pending ? 0 : booking.Status == BookingStatus.InProgress ? 1 : booking.Status == BookingStatus.Confirmed ? 2 : booking.Status == BookingStatus.Completed ? 3 : 4)
+                    .ThenByDescending(booking => booking.CreatedAt)
+                    .ThenBy(booking => booking.ScheduledAt);
+            }
+
+            DateTime now = DateTime.UtcNow;
+
+            if (selectedSort == "date")
+            {
+                return query
+                    .OrderBy(booking => booking.Status == BookingStatus.Completed || booking.Status == BookingStatus.Cancelled || booking.Status == BookingStatus.Rejected)
+                    .ThenBy(booking => booking.Status == BookingStatus.Completed || booking.Status == BookingStatus.Cancelled || booking.Status == BookingStatus.Rejected ? 0 : booking.ScheduledAt < now ? 1 : 0)
+                    .ThenBy(booking => booking.Status == BookingStatus.Completed ? 0 : booking.Status == BookingStatus.Cancelled ? 1 : booking.Status == BookingStatus.Rejected ? 2 : 0)
+                    .ThenBy(booking => booking.ScheduledAt)
+                    .ThenBy(booking => booking.Status == BookingStatus.InProgress ? 0 : booking.Status == BookingStatus.Confirmed ? 1 : booking.Status == BookingStatus.Pending ? 2 : booking.Status == BookingStatus.Completed ? 3 : 4)
+                    .ThenByDescending(booking => booking.CreatedAt);
+            }
+
+            return query
+                .OrderBy(booking => booking.Status == BookingStatus.InProgress ? 0 : booking.Status == BookingStatus.Confirmed ? 1 : booking.Status == BookingStatus.Pending ? 2 : booking.Status == BookingStatus.Completed ? 3 : 4)
+                .ThenBy(booking => booking.ScheduledAt < now)
+                .ThenBy(booking => booking.ScheduledAt)
+                .ThenByDescending(booking => booking.CreatedAt);
+        }
+
+        private static string NormalizeSort(string? sort)
+        {
+            return sort == "newest" || sort == "date" ? sort : "nearest";
         }
 
         private static int NormalizePage(int page, int totalItems)

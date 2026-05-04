@@ -1815,7 +1815,7 @@ button {
 
 .booking-filter-form {
     display: grid;
-    grid-template-columns: minmax(240px, 1fr) 220px auto;
+    grid-template-columns: minmax(240px, 1fr) 190px 220px auto;
     gap: 14px;
     align-items: end;
     margin: 0 0 22px;

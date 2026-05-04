@@ -49,6 +49,23 @@
             </select>
         </div>
 
+        <div class="booking-filter-field">
+            <label for="sort">Сортування</label>
+            <select id="sort" name="sort">
+                @foreach (var option in Model.SortOptions)
+                {
+                    if (Model.Sort == option.Value)
+                    {
+                        <option value="@option.Value" selected>@option.Text</option>
+                    }
+                    else
+                    {
+                        <option value="@option.Value">@option.Text</option>
+                    }
+                }
+            </select>
+        </div>
+
         <div class="booking-filter-actions">
             <button class="action-button action-primary" type="submit">Знайти</button>
             @if (Model.HasFilters)
@@ -140,7 +157,7 @@
                 <nav class="pagination-links" aria-label="Сторінки записів">
                     @if (Model.HasPreviousPage)
                     {
-                        <a asp-action="Index" asp-route-search="@Model.Search" asp-route-status="@Model.Status" asp-route-page="@(Model.Page - 1)">Назад</a>
+                        <a asp-action="Index" asp-route-search="@Model.Search" asp-route-status="@Model.Status" asp-route-sort="@Model.Sort" asp-route-page="@(Model.Page - 1)">Назад</a>
                     }
                     else
                     {
@@ -151,7 +168,7 @@
 
                     @if (Model.HasNextPage)
                     {
-                        <a asp-action="Index" asp-route-search="@Model.Search" asp-route-status="@Model.Status" asp-route-page="@(Model.Page + 1)">Далі</a>
+                        <a asp-action="Index" asp-route-search="@Model.Search" asp-route-status="@Model.Status" asp-route-sort="@Model.Sort" asp-route-page="@(Model.Page + 1)">Далі</a>
                     }
                     else
                     {

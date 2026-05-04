@@ -12,7 +12,7 @@ namespace AutoServiceBooking.Web.Controllers
     {
         [HttpGet]
         [Authorize]
-        public async Task<IActionResult> Index(string? search, BookingStatus? status, int page = 1)
+        public async Task<IActionResult> Index(string? search, BookingStatus? status, string sort = "nearest", int page = 1)
         {
             if (User.IsInRole(UserRole.Admin.ToString()))
             {
@@ -30,13 +30,12 @@ namespace AutoServiceBooking.Web.Controllers
             int totalBookings = await query.CountAsync();
             int pageNumber = NormalizePage(page, totalBookings);
 
-            List<Booking> bookings = await query
-                .OrderByDescending(booking => booking.CreatedAt)
+            List<Booking> bookings = await ApplyBookingSort(query, sort)
                 .Skip((pageNumber - 1) * BookingPageSize)
                 .Take(BookingPageSize)
                 .ToListAsync();
 
-            BookingListPageViewModel model = CreateBookingListPage(bookings, search, status, false, pageNumber, totalBookings);
+            BookingListPageViewModel model = CreateBookingListPage(bookings, search, status, sort, false, pageNumber, totalBookings);
 
             return View(model);
         }
