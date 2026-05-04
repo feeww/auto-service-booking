@@ -7,11 +7,15 @@ namespace AutoServiceBooking.Web.Controllers
 {
     public partial class BookingsController
     {
+        private const int BookingPageSize = 10;
+
         private BookingListPageViewModel CreateBookingListPage(
             List<Booking> bookings,
             string? search,
             BookingStatus? status,
-            bool isAdminView)
+            bool isAdminView,
+            int page,
+            int totalItems)
         {
             return new BookingListPageViewModel
             {
@@ -20,6 +24,10 @@ namespace AutoServiceBooking.Web.Controllers
                     .ToList(),
                 Search = search,
                 Status = status,
+                Page = page,
+                PageSize = BookingPageSize,
+                TotalItems = totalItems,
+                TotalPages = CalculateTotalPages(totalItems),
                 StatusOptions = Enum.GetValues<BookingStatus>()
                     .Select(currentStatus => new BookingStatusOptionViewModel
                     {
@@ -28,6 +36,33 @@ namespace AutoServiceBooking.Web.Controllers
                     })
                     .ToList()
             };
+        }
+
+        private static int NormalizePage(int page, int totalItems)
+        {
+            if (page < 1)
+            {
+                return 1;
+            }
+
+            int totalPages = CalculateTotalPages(totalItems);
+
+            if (totalPages == 0)
+            {
+                return 1;
+            }
+
+            return Math.Min(page, totalPages);
+        }
+
+        private static int CalculateTotalPages(int totalItems)
+        {
+            if (totalItems == 0)
+            {
+                return 0;
+            }
+
+            return (int)Math.Ceiling(totalItems / (double)BookingPageSize);
         }
 
         private static IQueryable<Booking> ApplyBookingFilters(

@@ -10,7 +10,7 @@ namespace AutoServiceBooking.Web.Controllers
     {
         [HttpGet]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Admin(string? search, BookingStatus? status)
+        public async Task<IActionResult> Admin(string? search, BookingStatus? status, int page = 1)
         {
             IQueryable<Booking> query = _dbContext.Bookings
                 .Include(booking => booking.AutoService)
@@ -18,11 +18,16 @@ namespace AutoServiceBooking.Web.Controllers
 
             query = ApplyBookingFilters(query, search, status, true);
 
+            int totalBookings = await query.CountAsync();
+            int pageNumber = NormalizePage(page, totalBookings);
+
             List<Booking> bookings = await query
                 .OrderByDescending(booking => booking.CreatedAt)
+                .Skip((pageNumber - 1) * BookingPageSize)
+                .Take(BookingPageSize)
                 .ToListAsync();
 
-            BookingListPageViewModel model = CreateBookingListPage(bookings, search, status, true);
+            BookingListPageViewModel model = CreateBookingListPage(bookings, search, status, true, pageNumber, totalBookings);
 
             return View(model);
         }

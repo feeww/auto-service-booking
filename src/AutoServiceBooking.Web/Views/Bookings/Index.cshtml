@@ -131,5 +131,34 @@
                 </article>
             }
         </div>
+
+        <div class="pagination-bar">
+            <p>Показано @Model.FirstItemNumber–@Model.LastItemNumber із @Model.TotalItems</p>
+
+            @if (Model.TotalPages > 1)
+            {
+                <nav class="pagination-links" aria-label="Сторінки записів">
+                    @if (Model.HasPreviousPage)
+                    {
+                        <a asp-action="Index" asp-route-search="@Model.Search" asp-route-status="@Model.Status" asp-route-page="@(Model.Page - 1)">Назад</a>
+                    }
+                    else
+                    {
+                        <span class="disabled">Назад</span>
+                    }
+
+                    <span class="current-page">@Model.Page з @Model.TotalPages</span>
+
+                    @if (Model.HasNextPage)
+                    {
+                        <a asp-action="Index" asp-route-search="@Model.Search" asp-route-status="@Model.Status" asp-route-page="@(Model.Page + 1)">Далі</a>
+                    }
+                    else
+                    {
+                        <span class="disabled">Далі</span>
+                    }
+                </nav>
+            }
+        </div>
     }
 </section>

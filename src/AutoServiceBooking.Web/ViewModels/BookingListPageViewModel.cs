@@ -8,7 +8,15 @@ namespace AutoServiceBooking.Web.ViewModels
         public string? Search { get; set; }
         public BookingStatus? Status { get; set; }
         public List<BookingStatusOptionViewModel> StatusOptions { get; set; } = new();
+        public int Page { get; set; } = 1;
+        public int PageSize { get; set; } = 5;
+        public int TotalItems { get; set; }
+        public int TotalPages { get; set; }
         public bool HasFilters => !string.IsNullOrWhiteSpace(Search) || Status.HasValue;
+        public bool HasPreviousPage => Page > 1;
+        public bool HasNextPage => Page < TotalPages;
+        public int FirstItemNumber => TotalItems == 0 ? 0 : ((Page - 1) * PageSize) + 1;
+        public int LastItemNumber => Math.Min(Page * PageSize, TotalItems);
     }
 
     public class BookingStatusOptionViewModel

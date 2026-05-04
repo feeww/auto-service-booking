@@ -1783,6 +1783,63 @@ button {
     min-height: 42px;
 }
 
+.pagination-bar {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    align-items: center;
+    margin-top: 18px;
+    padding: 14px 16px;
+    color: var(--color-muted);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 16px;
+}
+
+.pagination-bar p {
+    margin: 0;
+    font-size: 14px;
+}
+
+.pagination-links {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.pagination-links a,
+.pagination-links span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 36px;
+    padding: 8px 12px;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.pagination-links a {
+    color: var(--color-primary-dark);
+    background: var(--color-primary-soft);
+}
+
+.pagination-links a:hover {
+    color: white;
+    background: var(--color-primary);
+    text-decoration: none;
+}
+
+.pagination-links .current-page {
+    color: #334155;
+    background: #f1f5f9;
+}
+
+.pagination-links .disabled {
+    color: #94a3b8;
+    background: #f8fafc;
+}
+
 .booking-info-card {
     position: sticky;
     top: 104px;
@@ -1977,7 +2034,8 @@ footer {
     .saved-vehicle-preview-card,
     .card-actions,
     .form-actions,
-    .booking-actions {
+    .booking-actions,
+    .pagination-bar {
         grid-template-columns: 1fr;
         flex-direction: column;
         align-items: flex-start;
