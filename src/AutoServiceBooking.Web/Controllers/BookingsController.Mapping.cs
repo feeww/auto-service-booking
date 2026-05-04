@@ -122,7 +122,8 @@ namespace AutoServiceBooking.Web.Controllers
                 CanConfirm = isAdminView && booking.Status == BookingStatus.Pending,
                 CanReject = isAdminView && booking.Status == BookingStatus.Pending,
                 CanStartWork = isAdminView && booking.Status == BookingStatus.Confirmed,
-                CanComplete = isAdminView && booking.Status == BookingStatus.InProgress
+                CanComplete = isAdminView && booking.Status == BookingStatus.InProgress,
+                IsNewForAdmin = isAdminView && booking.Status == BookingStatus.Pending
             };
         }
 

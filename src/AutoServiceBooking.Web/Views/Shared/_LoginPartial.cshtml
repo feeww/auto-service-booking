@@ -1,4 +1,18 @@
-﻿<ul class="login-menu">
+﻿@using AutoServiceBooking.Web.Data
+@using AutoServiceBooking.Web.Models
+@using Microsoft.EntityFrameworkCore
+@inject ApplicationDbContext DbContext
+
+@{
+    int pendingBookingsCount = 0;
+
+    if (User.Identity?.IsAuthenticated == true && User.IsInRole("Admin"))
+    {
+        pendingBookingsCount = await DbContext.Bookings.CountAsync(booking => booking.Status == BookingStatus.Pending);
+    }
+}
+
+<ul class="login-menu">
 @if (User.Identity?.IsAuthenticated == true)
 {
     <li>
@@ -9,6 +23,10 @@
             <summary>
                 <i class="ph ph-squares-four" aria-hidden="true"></i>
                 <span>Кабінет</span>
+                @if (pendingBookingsCount > 0)
+                {
+                    <span class="nav-notification-badge">@pendingBookingsCount</span>
+                }
             </summary>
 
             <div class="account-dropdown-panel">
@@ -22,6 +40,10 @@
                     <a asp-controller="Bookings" asp-action="Admin">
                         <i class="ph ph-clipboard-text" aria-hidden="true"></i>
                         <span>Заявки</span>
+                        @if (pendingBookingsCount > 0)
+                        {
+                            <span class="menu-notification-badge">@pendingBookingsCount</span>
+                        }
                     </a>
                     <a asp-controller="AutoServices" asp-action="Index">
                         <i class="ph ph-wrench" aria-hidden="true"></i>
