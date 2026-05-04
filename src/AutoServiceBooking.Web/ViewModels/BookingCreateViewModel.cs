@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using AutoServiceBooking.Web.Models;
+using AutoServiceBooking.Web.Validation;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace AutoServiceBooking.Web.ViewModels
@@ -25,13 +26,13 @@ namespace AutoServiceBooking.Web.ViewModels
         public string CustomerName { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Вкажіть телефон")]
-        [RegularExpression(@"^(\+?380|0)[\s\-]?\d{2}[\s\-]?\d{3}[\s\-]?\d{2}[\s\-]?\d{2}$", ErrorMessage = "Вкажіть телефон у форматі +380XXXXXXXXX або 0XXXXXXXXX")]
-        [StringLength(30, ErrorMessage = "Телефон може містити максимум 30 символів")]
+        [RegularExpression(UserValidationRules.PhoneRegex, ErrorMessage = UserValidationRules.PhoneRegexMessage)]
+        [StringLength(UserValidationRules.PhoneMaxLength, ErrorMessage = UserValidationRules.PhoneLengthMessage)]
         [Display(Name = "Телефон")]
         public string CustomerPhone { get; set; } = string.Empty;
 
-        [EmailAddress(ErrorMessage = "Некоректний email")]
-        [StringLength(100, ErrorMessage = "Email може містити максимум 100 символів")]
+        [EmailAddress(ErrorMessage = UserValidationRules.EmailInvalidMessage)]
+        [StringLength(UserValidationRules.EmailMaxLength, ErrorMessage = UserValidationRules.EmailLengthMessage)]
         [Display(Name = "Email")]
         public string? CustomerEmail { get; set; }
 
