@@ -170,12 +170,23 @@ namespace AutoServiceBooking.Web.Models
 
         public void Reject()
         {
-            if (Status != BookingStatus.Pending)
+            if (Status != BookingStatus.Pending && Status != BookingStatus.Confirmed)
             {
-                throw new InvalidOperationException("Відхилити можна тільки записи зі статусом 'Очікує'.");
+                throw new InvalidOperationException("Відхилити можна тільки записи, які очікують або підтверджені.");
             }
 
             Status = BookingStatus.Rejected;
+        }
+
+        public void Reschedule(DateTime scheduledAt)
+        {
+            if (Status != BookingStatus.Pending && Status != BookingStatus.Confirmed)
+            {
+                throw new InvalidOperationException("Перенести можна тільки записи, які очікують або підтверджені.");
+            }
+
+            ValidateCore(AutoServiceId, scheduledAt);
+            ScheduledAt = scheduledAt;
         }
 
         public void StartWork()

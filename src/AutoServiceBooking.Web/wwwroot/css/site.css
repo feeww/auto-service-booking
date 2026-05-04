@@ -1554,13 +1554,26 @@ button {
     border-color: #dc2626;
 }
 
+.action-secondary {
+    color: #184f9f;
+    background: #edf5ff;
+    border-color: #d5e2f4;
+}
+
+.action-secondary:hover {
+    color: #0f2f5f;
+    background: #dcecff;
+    border-color: #bcd0ee;
+}
+
 .compact-button {
     min-height: 40px;
     padding: 10px 14px;
     font-size: 14px;
 }
 
-.complete-booking-form {
+.complete-booking-form,
+.reschedule-booking-form {
     display: grid;
     gap: 10px;
     min-width: 260px;
@@ -1568,6 +1581,13 @@ button {
     background: var(--color-surface-soft);
     border: 1px solid var(--color-border);
     border-radius: 16px;
+}
+
+.reschedule-booking-form label {
+    margin: 0;
+    color: var(--color-heading);
+    font-size: 14px;
+    font-weight: bold;
 }
 
 .admin-service-list {

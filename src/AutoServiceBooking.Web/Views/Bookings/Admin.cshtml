@@ -137,9 +137,21 @@
                             <form asp-action="Confirm" asp-route-id="@booking.Id" method="post">
                                 <button class="action-button action-primary" type="submit">Підтвердити</button>
                             </form>
+                        }
 
+                        @if (booking.CanReject)
+                        {
                             <form asp-action="Reject" asp-route-id="@booking.Id" method="post">
                                 <button class="action-button action-danger" type="submit">Відхилити</button>
+                            </form>
+                        }
+
+                        @if (booking.CanReschedule)
+                        {
+                            <form class="reschedule-booking-form" asp-action="Reschedule" asp-route-id="@booking.Id" method="post">
+                                <label for="scheduledAt-@booking.Id">Перенести запис</label>
+                                <input id="scheduledAt-@booking.Id" name="scheduledAt" type="datetime-local" value="@booking.ScheduledAt.ToString("yyyy-MM-ddTHH:mm")" required />
+                                <button class="action-button action-secondary" type="submit">Зберегти час</button>
                             </form>
                         }
 

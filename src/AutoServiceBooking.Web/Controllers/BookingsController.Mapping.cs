@@ -120,7 +120,8 @@ namespace AutoServiceBooking.Web.Controllers
                 AdminComment = booking.AdminComment,
                 CanCancel = !isAdminView && (booking.Status == BookingStatus.Pending || booking.Status == BookingStatus.Confirmed),
                 CanConfirm = isAdminView && booking.Status == BookingStatus.Pending,
-                CanReject = isAdminView && booking.Status == BookingStatus.Pending,
+                CanReject = isAdminView && (booking.Status == BookingStatus.Pending || booking.Status == BookingStatus.Confirmed),
+                CanReschedule = isAdminView && (booking.Status == BookingStatus.Pending || booking.Status == BookingStatus.Confirmed),
                 CanStartWork = isAdminView && booking.Status == BookingStatus.Confirmed,
                 CanComplete = isAdminView && booking.Status == BookingStatus.InProgress,
                 IsNewForAdmin = isAdminView && booking.Status == BookingStatus.Pending

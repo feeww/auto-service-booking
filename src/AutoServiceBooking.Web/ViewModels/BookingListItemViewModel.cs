@@ -34,6 +34,8 @@ namespace AutoServiceBooking.Web.ViewModels
 
         public bool CanReject { get; set; }
 
+        public bool CanReschedule { get; set; }
+
         public bool CanStartWork { get; set; }
 
         public bool CanComplete { get; set; }

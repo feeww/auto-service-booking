@@ -64,6 +64,21 @@ namespace AutoServiceBooking.Web.Controllers
             return await ChangeAdminBookingAsync(id, booking => booking.Complete(finalPrice, adminComment), "Запис завершено.");
         }
 
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Reschedule(int id, DateTime scheduledAt)
+        {
+            if (scheduledAt <= DateTime.Now)
+            {
+                TempData["ErrorMessage"] = "Оберіть майбутню дату та час.";
+                return RedirectToAction(nameof(Admin));
+            }
+
+            DateTime scheduledAtUtc = DateTime.SpecifyKind(scheduledAt, DateTimeKind.Local).ToUniversalTime();
+            return await ChangeAdminBookingAsync(id, booking => booking.Reschedule(scheduledAtUtc), "Запис перенесено.");
+        }
+
         private async Task<IActionResult> ChangeAdminBookingAsync(int id, Action<Booking> changeStatus, string successMessage)
         {
             Booking? booking = await _dbContext.Bookings.FirstOrDefaultAsync(currentBooking => currentBooking.Id == id);
