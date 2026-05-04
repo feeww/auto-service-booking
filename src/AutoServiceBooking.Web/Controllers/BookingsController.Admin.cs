@@ -34,9 +34,9 @@ namespace AutoServiceBooking.Web.Controllers
         [HttpPost]
         [Authorize(Roles = "Admin")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Confirm(int id)
+        public async Task<IActionResult> Confirm(int id, decimal estimatedPrice, int estimatedDurationMinutes)
         {
-            return await ChangeAdminBookingAsync(id, booking => booking.Confirm(), "Запис підтверджено.");
+            return await ChangeAdminBookingAsync(id, booking => booking.Confirm(estimatedPrice, estimatedDurationMinutes), "Запис підтверджено.");
         }
 
         [HttpPost]

@@ -114,6 +114,10 @@ namespace AutoServiceBooking.Web.Models
 
         public decimal? FinalPrice { get; private set; }
 
+        public decimal? EstimatedPrice { get; private set; }
+
+        public int? EstimatedDurationMinutes { get; private set; }
+
         [StringLength(1000)]
         public string? AdminComment { get; private set; }
 
@@ -143,14 +147,31 @@ namespace AutoServiceBooking.Web.Models
             ProblemDescription = problemDescription?.Trim();
         }
 
-        public void Confirm()
+        public void Confirm(decimal estimatedPrice, int estimatedDurationMinutes)
         {
             if (Status != BookingStatus.Pending)
             {
                 throw new InvalidOperationException("Підтвердити можна тільки записи зі статусом 'Очікує'.");
             }
 
+            SetEstimate(estimatedPrice, estimatedDurationMinutes);
             Status = BookingStatus.Confirmed;
+        }
+
+        private void SetEstimate(decimal estimatedPrice, int estimatedDurationMinutes)
+        {
+            if (estimatedPrice < 0)
+            {
+                throw new ArgumentException("Орієнтовна ціна не може бути від'ємною.", nameof(estimatedPrice));
+            }
+
+            if (estimatedDurationMinutes <= 0)
+            {
+                throw new ArgumentException("Орієнтовний час виконання має бути більшим за 0 хвилин.", nameof(estimatedDurationMinutes));
+            }
+
+            EstimatedPrice = estimatedPrice;
+            EstimatedDurationMinutes = estimatedDurationMinutes;
         }
 
         public void UpdateAdminComment(string? adminComment)

@@ -93,6 +93,8 @@ namespace AutoServiceBooking.Web.Data
                 entity.Property(booking => booking.GuestVehicleLicensePlate).HasMaxLength(20);
                 entity.Property(booking => booking.GuestVehicleFuelType).HasConversion<string>().HasMaxLength(20);
                 entity.Property(booking => booking.FinalPrice).HasColumnType("numeric(10,2)");
+                entity.Property(booking => booking.EstimatedPrice).HasColumnType("numeric(10,2)");
+                entity.Property(booking => booking.EstimatedDurationMinutes);
                 entity.Property(booking => booking.AdminComment).HasMaxLength(1000);
                 entity.Property(booking => booking.Status).HasConversion<string>().HasMaxLength(30).IsRequired();
                 entity.Property(booking => booking.ScheduledAt).IsRequired();

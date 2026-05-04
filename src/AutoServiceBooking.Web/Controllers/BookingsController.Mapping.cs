@@ -41,7 +41,6 @@ namespace AutoServiceBooking.Web.Controllers
                     .ToList(),
                 SortOptions = new List<BookingSortOptionViewModel>
                 {
-                    new BookingSortOptionViewModel { Value = "nearest", Text = "Найближчі активні" },
                     new BookingSortOptionViewModel { Value = "date", Text = "Найближча дата" },
                     new BookingSortOptionViewModel { Value = "newest", Text = "Нові заявки спочатку" }
                 }
@@ -50,9 +49,7 @@ namespace AutoServiceBooking.Web.Controllers
 
         private static IOrderedQueryable<Booking> ApplyBookingSort(IQueryable<Booking> query, string sort)
         {
-            string selectedSort = NormalizeSort(sort);
-
-            if (selectedSort == "newest")
+            if (NormalizeSort(sort) == "newest")
             {
                 return query
                     .OrderBy(booking => booking.Status == BookingStatus.Pending ? 0 : booking.Status == BookingStatus.InProgress ? 1 : booking.Status == BookingStatus.Confirmed ? 2 : booking.Status == BookingStatus.Completed ? 3 : 4)
@@ -62,27 +59,19 @@ namespace AutoServiceBooking.Web.Controllers
 
             DateTime now = DateTime.UtcNow;
 
-            if (selectedSort == "date")
-            {
-                return query
-                    .OrderBy(booking => booking.Status == BookingStatus.Completed || booking.Status == BookingStatus.Cancelled || booking.Status == BookingStatus.Rejected)
-                    .ThenBy(booking => booking.Status == BookingStatus.Completed || booking.Status == BookingStatus.Cancelled || booking.Status == BookingStatus.Rejected ? 0 : booking.ScheduledAt < now ? 1 : 0)
-                    .ThenBy(booking => booking.Status == BookingStatus.Completed ? 0 : booking.Status == BookingStatus.Cancelled ? 1 : booking.Status == BookingStatus.Rejected ? 2 : 0)
-                    .ThenBy(booking => booking.ScheduledAt)
-                    .ThenBy(booking => booking.Status == BookingStatus.InProgress ? 0 : booking.Status == BookingStatus.Confirmed ? 1 : booking.Status == BookingStatus.Pending ? 2 : booking.Status == BookingStatus.Completed ? 3 : 4)
-                    .ThenByDescending(booking => booking.CreatedAt);
-            }
-
             return query
-                .OrderBy(booking => booking.Status == BookingStatus.InProgress ? 0 : booking.Status == BookingStatus.Confirmed ? 1 : booking.Status == BookingStatus.Pending ? 2 : booking.Status == BookingStatus.Completed ? 3 : 4)
-                .ThenBy(booking => booking.ScheduledAt < now)
+                .OrderBy(booking => booking.Status == BookingStatus.Completed || booking.Status == BookingStatus.Cancelled || booking.Status == BookingStatus.Rejected)
+                .ThenBy(booking => booking.Status == BookingStatus.Completed || booking.Status == BookingStatus.Cancelled || booking.Status == BookingStatus.Rejected ? 0 : booking.ScheduledAt < now ? 1 : 0)
+                .ThenBy(booking => booking.Status == BookingStatus.Completed ? 0 : booking.Status == BookingStatus.Cancelled || booking.Status == BookingStatus.Rejected ? 1 : 0)
+                .ThenByDescending(booking => booking.Status == BookingStatus.Completed || booking.Status == BookingStatus.Cancelled || booking.Status == BookingStatus.Rejected ? booking.ScheduledAt : DateTime.MinValue)
                 .ThenBy(booking => booking.ScheduledAt)
+                .ThenBy(booking => booking.Status == BookingStatus.InProgress ? 0 : booking.Status == BookingStatus.Confirmed ? 1 : booking.Status == BookingStatus.Pending ? 2 : booking.Status == BookingStatus.Completed ? 3 : 4)
                 .ThenByDescending(booking => booking.CreatedAt);
         }
 
         private static string NormalizeSort(string? sort)
         {
-            return sort == "newest" || sort == "date" ? sort : "nearest";
+            return sort == "newest" ? "newest" : "date";
         }
 
         private static int NormalizePage(int page, int totalItems)
@@ -154,24 +143,27 @@ namespace AutoServiceBooking.Web.Controllers
             {
                 Id = booking.Id,
                 AutoServiceName = booking.AutoService.Name,
+                AutoServicePrice = booking.AutoService.Price,
                 ScheduledAt = booking.ScheduledAt.ToLocalTime(),
                 CreatedAt = booking.CreatedAt.ToLocalTime(),
                 StatusName = booking.Status.GetDisplayName(),
                 StatusCssClass = GetStatusCssClass(booking.Status),
+                IsClosedWithoutEstimate = booking.Status == BookingStatus.Cancelled || booking.Status == BookingStatus.Rejected,
                 VehicleTitle = GetVehicleTitle(booking),
                 CustomerName = booking.CustomerName,
                 CustomerPhone = booking.CustomerPhone,
                 CustomerEmail = booking.CustomerEmail,
                 ProblemDescription = booking.ProblemDescription,
                 FinalPrice = booking.FinalPrice,
+                EstimatedPrice = booking.EstimatedPrice,
+                EstimatedDurationMinutes = booking.EstimatedDurationMinutes,
                 AdminComment = booking.AdminComment,
                 CanCancel = !isAdminView && (booking.Status == BookingStatus.Pending || booking.Status == BookingStatus.Confirmed),
                 CanConfirm = isAdminView && booking.Status == BookingStatus.Pending,
                 CanReject = isAdminView && (booking.Status == BookingStatus.Pending || booking.Status == BookingStatus.Confirmed),
                 CanReschedule = isAdminView && (booking.Status == BookingStatus.Pending || booking.Status == BookingStatus.Confirmed),
                 CanStartWork = isAdminView && booking.Status == BookingStatus.Confirmed,
-                CanComplete = isAdminView && booking.Status == BookingStatus.InProgress,
-                IsNewForAdmin = isAdminView && booking.Status == BookingStatus.Pending
+                CanComplete = isAdminView && booking.Status == BookingStatus.InProgress
             };
         }
 

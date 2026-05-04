@@ -126,6 +126,14 @@
                                 <dt>Фінальна ціна</dt>
                                 <dd>@(booking.FinalPrice.HasValue ? $"{booking.FinalPrice:0} грн" : "Ще не визначено")</dd>
                             </div>
+                            <div>
+                                <dt>Орієнтовна ціна</dt>
+                                <dd>@(booking.EstimatedPrice.HasValue ? $"{booking.EstimatedPrice:0} грн" : booking.IsClosedWithoutEstimate ? "Не вказано" : "Після підтвердження")</dd>
+                            </div>
+                            <div>
+                                <dt>Орієнтовний час</dt>
+                                <dd>@(booking.EstimatedDurationMinutes.HasValue ? $"{booking.EstimatedDurationMinutes} хв" : booking.IsClosedWithoutEstimate ? "Не вказано" : "Після підтвердження")</dd>
+                            </div>
                         </dl>
 
                         @if (!string.IsNullOrWhiteSpace(booking.ProblemDescription))

@@ -101,10 +101,6 @@
                                 <div class="booking-meta-line">
                                     <span class="booking-number">Заявка #@booking.Id</span>
                                     <span class="booking-status @booking.StatusCssClass">@booking.StatusName</span>
-                                    @if (booking.IsNewForAdmin)
-                                    {
-                                        <span class="new-booking-badge">Новий запит</span>
-                                    }
                                 </div>
                                 <h2>@booking.AutoServiceName</h2>
                             </div>
@@ -135,6 +131,14 @@
                                 <dt>Фінальна ціна</dt>
                                 <dd>@(booking.FinalPrice.HasValue ? $"{booking.FinalPrice:0} грн" : "Ще не визначено")</dd>
                             </div>
+                            <div>
+                                <dt>Орієнтовна ціна</dt>
+                                <dd>@(booking.EstimatedPrice.HasValue ? $"{booking.EstimatedPrice:0} грн" : booking.IsClosedWithoutEstimate ? "Не вказано" : "Після підтвердження")</dd>
+                            </div>
+                            <div>
+                                <dt>Орієнтовний час</dt>
+                                <dd>@(booking.EstimatedDurationMinutes.HasValue ? $"{booking.EstimatedDurationMinutes} хв" : booking.IsClosedWithoutEstimate ? "Не вказано" : "Після підтвердження")</dd>
+                            </div>
                         </dl>
 
                         @if (!string.IsNullOrWhiteSpace(booking.ProblemDescription))
@@ -151,7 +155,10 @@
                     <div class="admin-booking-actions">
                         @if (booking.CanConfirm)
                         {
-                            <form asp-action="Confirm" asp-route-id="@booking.Id" method="post">
+                            <form class="confirm-booking-form" asp-action="Confirm" asp-route-id="@booking.Id" method="post">
+                                <label for="estimatedPrice-@booking.Id">Підтвердження</label>
+                                <input id="estimatedPrice-@booking.Id" name="estimatedPrice" type="number" min="0" step="0.01" placeholder="Орієнтовна ціна" value="@(booking.AutoServicePrice > 0 ? booking.AutoServicePrice.ToString("0.##") : null)" required />
+                                <input name="estimatedDurationMinutes" type="number" min="1" step="1" placeholder="Час, хв" required />
                                 <button class="action-button action-primary" type="submit">Підтвердити</button>
                             </form>
                         }

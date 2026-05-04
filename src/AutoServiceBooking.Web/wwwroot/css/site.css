@@ -1424,20 +1424,6 @@ button {
     white-space: nowrap;
 }
 
-.new-booking-badge {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 8px 12px;
-    color: white;
-    background: #dc2626;
-    border-radius: 999px;
-    font-size: 13px;
-    font-weight: bold;
-    line-height: 1;
-    white-space: nowrap;
-}
-
 .status-pending {
     color: #92400e;
     background: #fef3c7;
@@ -1572,6 +1558,7 @@ button {
     font-size: 14px;
 }
 
+.confirm-booking-form,
 .complete-booking-form,
 .reschedule-booking-form {
     display: grid;
@@ -1583,6 +1570,7 @@ button {
     border-radius: 16px;
 }
 
+.confirm-booking-form label,
 .reschedule-booking-form label {
     margin: 0;
     color: var(--color-heading);

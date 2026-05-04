@@ -6,6 +6,8 @@ namespace AutoServiceBooking.Web.ViewModels
 
         public string AutoServiceName { get; set; } = string.Empty;
 
+        public decimal AutoServicePrice { get; set; }
+
         public DateTime ScheduledAt { get; set; }
 
         public DateTime CreatedAt { get; set; }
@@ -13,6 +15,8 @@ namespace AutoServiceBooking.Web.ViewModels
         public string StatusName { get; set; } = string.Empty;
 
         public string StatusCssClass { get; set; } = string.Empty;
+
+        public bool IsClosedWithoutEstimate { get; set; }
 
         public string VehicleTitle { get; set; } = string.Empty;
 
@@ -25,6 +29,10 @@ namespace AutoServiceBooking.Web.ViewModels
         public string? ProblemDescription { get; set; }
 
         public decimal? FinalPrice { get; set; }
+
+        public decimal? EstimatedPrice { get; set; }
+
+        public int? EstimatedDurationMinutes { get; set; }
 
         public string? AdminComment { get; set; }
 
@@ -40,6 +48,5 @@ namespace AutoServiceBooking.Web.ViewModels
 
         public bool CanComplete { get; set; }
 
-        public bool IsNewForAdmin { get; set; }
     }
 }
