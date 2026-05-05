@@ -172,13 +172,12 @@
                     <span class="is-hidden" data-service-duration="@serviceDuration.ServiceId" data-duration-minutes="@serviceDuration.DurationMinutes"></span>
                 }
 
-                @foreach (var occupiedInterval in Model.OccupiedIntervals)
+                @foreach (var unavailableSlot in Model.UnavailableSlots)
                 {
                     <span class="is-hidden"
-                          data-occupied-date="@occupiedInterval.DateValue"
-                          data-occupied-start="@occupiedInterval.StartTime"
-                          data-occupied-end="@occupiedInterval.EndTime"
-                          data-occupied-label="@occupiedInterval.Label"></span>
+                          data-unavailable-service="@unavailableSlot.ServiceId"
+                          data-unavailable-date="@unavailableSlot.DateValue"
+                          data-unavailable-time="@unavailableSlot.TimeValue"></span>
                 }
 
                 <span class="is-hidden"

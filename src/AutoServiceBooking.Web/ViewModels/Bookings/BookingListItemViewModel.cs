@@ -51,6 +51,5 @@ namespace AutoServiceBooking.Web.ViewModels
         public bool CanStartWork { get; set; }
 
         public bool CanComplete { get; set; }
-
     }
 }

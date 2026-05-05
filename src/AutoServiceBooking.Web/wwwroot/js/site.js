@@ -112,11 +112,10 @@ initializeSafely('booking availability picker', () => {
             .map((element) => [element.dataset.serviceDuration, Number(element.dataset.durationMinutes || '60')])
     );
 
-    const occupiedIntervals = Array.from(document.querySelectorAll('[data-occupied-date]')).map((element) => ({
-        date: element.dataset.occupiedDate,
-        start: element.dataset.occupiedStart,
-        end: element.dataset.occupiedEnd
-    }));
+    const unavailableSlots = new Set(
+        Array.from(document.querySelectorAll('[data-unavailable-date]'))
+            .map((element) => `${element.dataset.unavailableService}|${element.dataset.unavailableDate}|${element.dataset.unavailableTime}`)
+    );
 
     const workDayStart = Number(workDaySettings.dataset.workDayStart || '540');
     const workDayEnd = Number(workDaySettings.dataset.workDayEnd || '1140');
@@ -142,18 +141,8 @@ initializeSafely('booking availability picker', () => {
         dateSelect.classList.toggle('input-invalid', message !== '');
     };
 
-    const getBusyReason = (date, startMinutes, endMinutes) => {
-        const busyInterval = occupiedIntervals.find((interval) => {
-            if (interval.date !== date) {
-                return false;
-            }
-
-            const busyStart = parseTimeToMinutes(interval.start);
-            const busyEnd = parseTimeToMinutes(interval.end);
-            return startMinutes < busyEnd && endMinutes > busyStart;
-        });
-
-        return busyInterval ? 'Недоступно' : '';
+    const isBusy = (serviceId, date, time) => {
+        return unavailableSlots.has(`${serviceId}|${date}|${time}`);
     };
 
     const updateCalendarState = () => {
@@ -193,18 +182,17 @@ initializeSafely('booking availability picker', () => {
         let firstAvailableTime = '';
 
         for (let start = workDayStart; start + durationMinutes <= workDayEnd; start += slotStep) {
-            const end = start + durationMinutes;
             const time = formatMinutesAsTime(start);
-            const busyReason = getBusyReason(selectedDate, start, end);
             const button = document.createElement('button');
+            const busy = isBusy(selectedServiceId, selectedDate, time);
 
             button.type = 'button';
             button.className = 'time-slot-button';
             button.textContent = time;
 
-            if (busyReason) {
+            if (busy) {
                 button.disabled = true;
-                button.title = busyReason;
+                button.title = 'Недоступно';
                 button.classList.add('busy');
                 button.setAttribute('aria-label', `${time}, недоступно`);
             } else {
@@ -220,7 +208,7 @@ initializeSafely('booking availability picker', () => {
                 });
             }
 
-            if (currentSelectedTime === time && !busyReason) {
+            if (currentSelectedTime === time && !busy) {
                 button.classList.add('active');
                 selectedSlotStillAvailable = true;
             }

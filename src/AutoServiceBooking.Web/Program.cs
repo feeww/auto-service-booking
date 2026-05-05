@@ -1,6 +1,8 @@
 using AutoServiceBooking.Web.Data;
 using AutoServiceBooking.Web.Extensions;
 using AutoServiceBooking.Web.Services;
+using AutoServiceBooking.Web.Services.Bookings;
+using AutoServiceBooking.Web.Services.Scheduling;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,6 +20,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IScheduleService, ScheduleService>();
+builder.Services.AddScoped<IBookingService, BookingService>();
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>

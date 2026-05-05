@@ -82,52 +82,6 @@ namespace AutoServiceBooking.Web.ViewModels
 
         public List<BookingServiceDurationViewModel> ServiceDurations { get; set; } = new List<BookingServiceDurationViewModel>();
 
-        public List<BookingOccupiedIntervalViewModel> OccupiedIntervals { get; set; } = new List<BookingOccupiedIntervalViewModel>();
-    }
-
-    public class SavedVehicleBookingViewModel
-    {
-        public int Id { get; set; }
-
-        public string Make { get; set; } = string.Empty;
-
-        public string Model { get; set; } = string.Empty;
-
-        public int Year { get; set; }
-
-        public string LicensePlate { get; set; } = string.Empty;
-
-        public int Mileage { get; set; }
-
-        public string FuelTypeName { get; set; } = string.Empty;
-    }
-
-    public class BookingBlockedDateViewModel
-    {
-        public string DateValue { get; set; } = string.Empty;
-
-        public string DisplayDate { get; set; } = string.Empty;
-
-        public string Reason { get; set; } = string.Empty;
-    }
-
-    public class BookingServiceDurationViewModel
-    {
-        public int ServiceId { get; set; }
-
-        public int DurationMinutes { get; set; }
-    }
-
-    public class BookingOccupiedIntervalViewModel
-    {
-        public int BookingId { get; set; }
-
-        public string DateValue { get; set; } = string.Empty;
-
-        public string StartTime { get; set; } = string.Empty;
-
-        public string EndTime { get; set; } = string.Empty;
-
-        public string Label { get; set; } = string.Empty;
+        public List<BookingUnavailableSlotViewModel> UnavailableSlots { get; set; } = new List<BookingUnavailableSlotViewModel>();
     }
 }

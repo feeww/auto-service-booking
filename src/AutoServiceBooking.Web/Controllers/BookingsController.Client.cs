@@ -1,6 +1,7 @@
 using AutoServiceBooking.Web.Extensions;
 using AutoServiceBooking.Web.Models;
 using AutoServiceBooking.Web.Models.Users;
+using AutoServiceBooking.Web.Services.Bookings;
 using AutoServiceBooking.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -46,22 +47,18 @@ namespace AutoServiceBooking.Web.Controllers
         public async Task<IActionResult> Cancel(int id)
         {
             int clientUserId = User.GetUserId();
-            Booking? booking = await _dbContext.Bookings
-                .FirstOrDefaultAsync(currentBooking => currentBooking.Id == id && currentBooking.ClientUserId == clientUserId);
+            BookingOperationResult result = await _bookingService.CancelAsync(id, clientUserId);
 
-            if (booking == null)
+            if (result.NotFound)
             {
                 return NotFound();
             }
 
-            if (booking.Status != BookingStatus.Pending && booking.Status != BookingStatus.Confirmed)
+            if (!result.Success)
             {
-                TempData["ErrorMessage"] = "Скасувати можна тільки записи, які очікують або підтверджені.";
+                TempData["ErrorMessage"] = result.ErrorMessage ?? "Не вдалося скасувати запис.";
                 return RedirectToAction(nameof(Index));
             }
-
-            booking.Cancel();
-            await _dbContext.SaveChangesAsync();
 
             TempData["SuccessMessage"] = "Запис скасовано.";
             return RedirectToAction(nameof(Index));

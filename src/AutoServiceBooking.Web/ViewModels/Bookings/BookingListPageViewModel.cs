@@ -25,18 +25,4 @@ namespace AutoServiceBooking.Web.ViewModels
         public List<BookingBlockedDateViewModel> BlockedDates { get; set; } = new();
         public List<BookingOccupiedIntervalViewModel> OccupiedIntervals { get; set; } = new();
     }
-
-    public class BookingStatusOptionViewModel
-    {
-        public string Value { get; set; } = string.Empty;
-
-        public string Text { get; set; } = string.Empty;
-    }
-
-    public class BookingSortOptionViewModel
-    {
-        public string Value { get; set; } = string.Empty;
-
-        public string Text { get; set; } = string.Empty;
-    }
 }
