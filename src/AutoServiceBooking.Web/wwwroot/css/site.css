@@ -817,27 +817,28 @@ main {
 }
 
 .vehicle-card {
-    overflow: hidden;
+    padding: 26px;
     background: white;
     border: 1px solid #e6ebf2;
     border-radius: 22px;
     box-shadow: 0 12px 32px rgba(31, 41, 55, 0.06);
 }
 
-.vehicle-card img {
-    width: 100%;
-    height: 170px;
-    object-fit: cover;
-    display: block;
-    transition: transform 0.35s ease;
+.vehicle-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    color: #2463c7;
+    background: #edf5ff;
+    border-radius: 14px;
+    font-size: 26px;
+    margin-bottom: 16px;
 }
 
-.vehicle-card:hover img {
-    transform: none;
-}
-
-.vehicle-card div {
-    padding: 22px;
+.vehicle-icon i {
+    line-height: 1;
 }
 
 .vehicle-card h3 {
