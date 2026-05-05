@@ -23,10 +23,15 @@
         <div class="alert-message error-message">@errorMessage</div>
     }
 
+    <nav class="vehicle-tabs admin-tabs" aria-label="Адмінські розділи">
+        <a class="vehicle-tab active" asp-action="Admin">Заявки <span>@Model.TotalItems</span></a>
+        <a class="vehicle-tab" asp-action="Schedule">Розклад</a>
+    </nav>
+
     <form class="booking-filter-form" method="get">
         <div class="booking-filter-field">
             <label for="search">Пошук</label>
-            <input id="search" name="search" value="@Model.Search" placeholder="Номер, клієнт, телефон, email або авто" />
+            <input id="search" name="search" value="@Model.Search" placeholder="Номер (#15), клієнт, телефон, email або авто" />
         </div>
 
         <div class="booking-filter-field">
@@ -172,16 +177,41 @@
 
                         @if (booking.CanReschedule)
                         {
-                            <form class="reschedule-booking-form" asp-action="Reschedule" asp-route-id="@booking.Id" method="post">
-                                <label for="scheduledAt-@booking.Id">Перенести запис</label>
-                                <input id="scheduledAt-@booking.Id" name="scheduledAt" type="datetime-local" value="@booking.ScheduledAt.ToString("yyyy-MM-ddTHH:mm")" required />
-                                <button class="action-button action-secondary" type="submit">Зберегти час</button>
-                            </form>
+                            <details class="reschedule-details">
+                                <summary class="action-button action-secondary">Перенести</summary>
+                                <form class="reschedule-booking-form"
+                                      asp-action="Reschedule"
+                                      asp-route-id="@booking.Id"
+                                      method="post"
+                                      data-admin-reschedule-form
+                                      data-booking-id="@booking.Id"
+                                      data-duration-minutes="@booking.RescheduleDurationMinutes">
+                                    <label for="scheduledAt-@booking.Id">Новий час</label>
+                                    <input id="rescheduleDate-@booking.Id"
+                                           type="date"
+                                           value="@booking.ScheduledAt.ToString("yyyy-MM-dd")"
+                                           min="@DateTime.Today.ToString("yyyy-MM-dd")"
+                                           data-admin-reschedule-date />
+                                    <input id="scheduledAt-@booking.Id"
+                                           name="scheduledAt"
+                                           type="hidden"
+                                           value="@booking.ScheduledAt.ToString("yyyy-MM-ddTHH:mm")"
+                                           data-admin-reschedule-value
+                                           required />
+                                    <div class="time-slot-grid admin-time-slot-grid" data-admin-reschedule-slots></div>
+                                    <span class="validation-error calendar-warning is-hidden" data-admin-reschedule-warning></span>
+                                    <p class="time-slot-helper" data-admin-reschedule-helper>Оберіть дату та час.</p>
+                                    <div class="reschedule-form-actions">
+                                        <button class="action-button action-secondary" type="submit">Зберегти</button>
+                                        <button class="action-button action-muted" type="button" data-admin-reschedule-close>Закрити</button>
+                                    </div>
+                                </form>
+                            </details>
                         }
 
                         @if (booking.CanStartWork)
                         {
-                            <form asp-action="StartWork" asp-route-id="@booking.Id" method="post">
+                            <form class="start-work-action" asp-action="StartWork" asp-route-id="@booking.Id" method="post">
                                 <button class="action-button action-primary" type="submit">Почати роботу</button>
                             </form>
                         }
@@ -228,4 +258,24 @@
             }
         </div>
     }
+
+    @foreach (var blockedDate in Model.BlockedDates)
+    {
+        <span class="is-hidden" data-admin-blocked-date="@blockedDate.DateValue" data-admin-blocked-reason="@blockedDate.Reason"></span>
+    }
+
+    @foreach (var occupiedInterval in Model.OccupiedIntervals)
+    {
+        <span class="is-hidden"
+              data-admin-occupied-booking-id="@occupiedInterval.BookingId"
+              data-admin-occupied-date="@occupiedInterval.DateValue"
+              data-admin-occupied-start="@occupiedInterval.StartTime"
+              data-admin-occupied-end="@occupiedInterval.EndTime"
+              data-admin-occupied-label="@occupiedInterval.Label"></span>
+    }
+
+    <span class="is-hidden"
+          data-admin-work-day-start="@(Model.WorkDayStartHour * 60)"
+          data-admin-work-day-end="@(Model.WorkDayEndHour * 60)"
+          data-admin-slot-step="@Model.SlotStepMinutes"></span>
 </section>

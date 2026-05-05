@@ -118,7 +118,16 @@ namespace AutoServiceBooking.Web.Controllers
             }
 
             string searchTerm = $"%{search.Trim()}%";
-            bool isNumber = int.TryParse(search.Trim(), out int bookingId);
+            string trimmedSearch = search.Trim();
+            int exactBookingId = 0;
+            bool isExactBookingNumber = trimmedSearch.StartsWith('#') && int.TryParse(trimmedSearch[1..], out exactBookingId);
+
+            if (isExactBookingNumber)
+            {
+                return query.Where(booking => booking.Id == exactBookingId);
+            }
+
+            bool isNumber = int.TryParse(trimmedSearch, out int bookingId);
 
             query = query.Where(booking =>
                 (isNumber && booking.Id == bookingId) ||
@@ -144,6 +153,7 @@ namespace AutoServiceBooking.Web.Controllers
                 Id = booking.Id,
                 AutoServiceName = booking.AutoService.Name,
                 AutoServicePrice = booking.AutoService.Price,
+                AutoServiceDurationMinutes = booking.AutoService.DurationMinutes,
                 ScheduledAt = booking.ScheduledAt.ToLocalTime(),
                 CreatedAt = booking.CreatedAt.ToLocalTime(),
                 StatusName = booking.Status.GetDisplayName(),

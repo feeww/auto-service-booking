@@ -135,18 +135,56 @@
                 <div class="form-grid two-columns">
                     <div class="form-row">
                         <label asp-for="AutoServiceId"></label>
-                        <select asp-for="AutoServiceId" asp-items="Model.AutoServiceOptions">
+                        <select asp-for="AutoServiceId" asp-items="Model.AutoServiceOptions" data-service-select>
                             <option value="">Оберіть послугу</option>
                         </select>
                         <span asp-validation-for="AutoServiceId" class="validation-error"></span>
                     </div>
 
                     <div class="form-row">
-                        <label asp-for="ScheduledAt"></label>
-                        <input asp-for="ScheduledAt" type="datetime-local" value="@scheduledAtValue" />
+                        <label for="booking-date-select">Дата</label>
+                        <input id="booking-date-select"
+                               type="date"
+                               value="@Model.ScheduledAt.ToString("yyyy-MM-dd")"
+                               min="@DateTime.Today.ToString("yyyy-MM-dd")"
+                               data-booking-date-select />
+                        <input asp-for="ScheduledAt" type="hidden" value="@scheduledAtValue" data-booking-date-input />
                         <span asp-validation-for="ScheduledAt" class="validation-error"></span>
+                        <span class="validation-error calendar-warning is-hidden" data-booking-date-warning></span>
                     </div>
                 </div>
+
+                <div class="form-row">
+                    <label>Доступний час</label>
+                    <div class="time-slot-grid" data-time-slot-grid></div>
+                    <p class="time-slot-helper" data-time-slot-helper>
+                        Робочий час: @Model.WorkDayStartHour.ToString("00"):00–@Model.WorkDayEndHour.ToString("00"):00. Оберіть послугу та дату, щоб побачити вільні години.
+                    </p>
+                </div>
+
+                @foreach (var blockedDate in Model.BlockedDates)
+                {
+                    <span class="is-hidden" data-blocked-date="@blockedDate.DateValue" data-blocked-reason="@blockedDate.Reason"></span>
+                }
+
+                @foreach (var serviceDuration in Model.ServiceDurations)
+                {
+                    <span class="is-hidden" data-service-duration="@serviceDuration.ServiceId" data-duration-minutes="@serviceDuration.DurationMinutes"></span>
+                }
+
+                @foreach (var occupiedInterval in Model.OccupiedIntervals)
+                {
+                    <span class="is-hidden"
+                          data-occupied-date="@occupiedInterval.DateValue"
+                          data-occupied-start="@occupiedInterval.StartTime"
+                          data-occupied-end="@occupiedInterval.EndTime"
+                          data-occupied-label="@occupiedInterval.Label"></span>
+                }
+
+                <span class="is-hidden"
+                      data-work-day-start="@(Model.WorkDayStartHour * 60)"
+                      data-work-day-end="@(Model.WorkDayEndHour * 60)"
+                      data-slot-step="@Model.SlotStepMinutes"></span>
 
                 <div class="form-row">
                     <label asp-for="ProblemDescription"></label>
@@ -169,6 +207,19 @@
                 <li>Менеджер підтвердить запис телефоном.</li>
                 <li>Після огляду майстер назве точну вартість.</li>
             </ul>
+
+            @if (Model.BlockedDates.Any())
+            {
+                <div class="booking-account-note unavailable-dates-note">
+                    <strong>Найближчі недоступні дати</strong>
+                    <ul>
+                        @foreach (var blockedDate in Model.BlockedDates.Take(5))
+                        {
+                            <li>@blockedDate.DisplayDate — @blockedDate.Reason</li>
+                        }
+                    </ul>
+                </div>
+            }
 
             @if (!Model.IsAuthenticatedUser)
             {

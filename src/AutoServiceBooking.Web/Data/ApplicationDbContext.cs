@@ -22,6 +22,8 @@ namespace AutoServiceBooking.Web.Data
 
         public DbSet<Booking> Bookings { get; set; }
 
+        public DbSet<BlockedDate> BlockedDates { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -113,6 +115,19 @@ namespace AutoServiceBooking.Web.Data
                     .WithMany(autoService => autoService.Bookings)
                     .HasForeignKey(booking => booking.AutoServiceId)
                     .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            modelBuilder.Entity<BlockedDate>(entity =>
+            {
+                entity.ToTable("BlockedDates");
+
+                entity.HasKey(blockedDate => blockedDate.Id);
+
+                entity.HasIndex(blockedDate => blockedDate.Date).IsUnique();
+
+                entity.Property(blockedDate => blockedDate.Date).HasColumnType("date").IsRequired();
+                entity.Property(blockedDate => blockedDate.Reason).HasMaxLength(200).IsRequired();
+                entity.Property(blockedDate => blockedDate.CreatedAt).IsRequired();
             });
         }
     }

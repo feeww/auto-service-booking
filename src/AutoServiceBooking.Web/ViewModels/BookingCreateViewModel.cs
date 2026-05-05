@@ -64,11 +64,25 @@ namespace AutoServiceBooking.Web.ViewModels
 
         public bool IsAuthenticatedUser { get; set; }
 
+        public DateTime MinScheduledAt { get; set; } = DateTime.Now.AddMinutes(30);
+
+        public int WorkDayStartHour { get; set; } = 9;
+
+        public int WorkDayEndHour { get; set; } = 19;
+
+        public int SlotStepMinutes { get; set; } = 30;
+
         public List<SelectListItem> AutoServiceOptions { get; set; } = new List<SelectListItem>();
 
         public List<SelectListItem> SavedVehicleOptions { get; set; } = new List<SelectListItem>();
 
         public List<SavedVehicleBookingViewModel> SavedVehicles { get; set; } = new List<SavedVehicleBookingViewModel>();
+
+        public List<BookingBlockedDateViewModel> BlockedDates { get; set; } = new List<BookingBlockedDateViewModel>();
+
+        public List<BookingServiceDurationViewModel> ServiceDurations { get; set; } = new List<BookingServiceDurationViewModel>();
+
+        public List<BookingOccupiedIntervalViewModel> OccupiedIntervals { get; set; } = new List<BookingOccupiedIntervalViewModel>();
     }
 
     public class SavedVehicleBookingViewModel
@@ -86,5 +100,34 @@ namespace AutoServiceBooking.Web.ViewModels
         public int Mileage { get; set; }
 
         public string FuelTypeName { get; set; } = string.Empty;
+    }
+
+    public class BookingBlockedDateViewModel
+    {
+        public string DateValue { get; set; } = string.Empty;
+
+        public string DisplayDate { get; set; } = string.Empty;
+
+        public string Reason { get; set; } = string.Empty;
+    }
+
+    public class BookingServiceDurationViewModel
+    {
+        public int ServiceId { get; set; }
+
+        public int DurationMinutes { get; set; }
+    }
+
+    public class BookingOccupiedIntervalViewModel
+    {
+        public int BookingId { get; set; }
+
+        public string DateValue { get; set; } = string.Empty;
+
+        public string StartTime { get; set; } = string.Empty;
+
+        public string EndTime { get; set; } = string.Empty;
+
+        public string Label { get; set; } = string.Empty;
     }
 }

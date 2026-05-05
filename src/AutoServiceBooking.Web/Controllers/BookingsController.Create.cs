@@ -178,12 +178,39 @@ namespace AutoServiceBooking.Web.Controllers
         private async Task FillOptionsAsync(BookingCreateViewModel model)
         {
             model.IsAuthenticatedUser = User.Identity?.IsAuthenticated == true;
+            model.MinScheduledAt = DateTime.Now.AddMinutes(30);
+            model.WorkDayStartHour = WorkDayStartHour;
+            model.WorkDayEndHour = WorkDayEndHour;
+            model.SlotStepMinutes = SlotStepMinutes;
+
+            List<BlockedDate> blockedDates = await _dbContext.BlockedDates
+                .Where(blockedDate => blockedDate.Date >= DateTime.Today)
+                .OrderBy(blockedDate => blockedDate.Date)
+                .Take(30)
+                .ToListAsync();
+
+            model.BlockedDates = blockedDates
+                .Select(blockedDate => new BookingBlockedDateViewModel
+                {
+                    DateValue = blockedDate.Date.ToString("yyyy-MM-dd"),
+                    DisplayDate = blockedDate.Date.ToString("dd.MM.yyyy"),
+                    Reason = blockedDate.Reason
+                })
+                .ToList();
 
             List<AutoService> activeServices = await _dbContext.AutoServices
                 .Where(autoService => autoService.IsActive)
                 .OrderBy(autoService => autoService.Name == "Інше")
                 .ThenBy(autoService => autoService.Name)
                 .ToListAsync();
+
+            model.ServiceDurations = activeServices
+                .Select(autoService => new BookingServiceDurationViewModel
+                {
+                    ServiceId = autoService.Id,
+                    DurationMinutes = autoService.DurationMinutes
+                })
+                .ToList();
 
             model.AutoServiceOptions = activeServices
                 .Select(autoService => new SelectListItem
@@ -192,6 +219,36 @@ namespace AutoServiceBooking.Web.Controllers
                     Text = autoService.Price == 0
                         ? $"{autoService.Name} — опишіть проблему"
                         : $"{autoService.Name} — від {autoService.Price:0} грн"
+                })
+                .ToList();
+
+            DateTime availabilityFrom = DateTime.Today;
+            DateTime availabilityTo = availabilityFrom.AddDays(30);
+            (DateTime availabilityStartUtc, DateTime availabilityEndUtc) = GetLocalDateUtcRange(availabilityFrom, availabilityTo);
+
+            List<Booking> occupiedBookings = await _dbContext.Bookings
+                .Include(booking => booking.AutoService)
+                .Where(booking =>
+                    (booking.Status == BookingStatus.Confirmed || booking.Status == BookingStatus.InProgress) &&
+                    booking.ScheduledAt >= availabilityStartUtc &&
+                    booking.ScheduledAt < availabilityEndUtc)
+                .OrderBy(booking => booking.ScheduledAt)
+                .ToListAsync();
+
+            model.OccupiedIntervals = occupiedBookings
+                .Select(booking =>
+                {
+                    DateTime localStart = booking.ScheduledAt.ToLocalTime();
+                    DateTime localEnd = localStart.AddMinutes(GetBookingDurationMinutes(booking));
+
+                    return new BookingOccupiedIntervalViewModel
+                    {
+                        BookingId = booking.Id,
+                        DateValue = localStart.ToString("yyyy-MM-dd"),
+                        StartTime = localStart.ToString("HH:mm"),
+                        EndTime = localEnd.ToString("HH:mm"),
+                        Label = $"Заявка #{booking.Id}"
+                    };
                 })
                 .ToList();
 
@@ -230,6 +287,8 @@ namespace AutoServiceBooking.Web.Controllers
 
         private async Task ValidateBookingFormAsync(BookingCreateViewModel formModel)
         {
+            AutoService? selectedService = null;
+
             if (!formModel.AutoServiceId.HasValue)
             {
                 if (!ModelState.TryGetValue(nameof(formModel.AutoServiceId), out var serviceState) || serviceState.Errors.Count == 0)
@@ -237,14 +296,48 @@ namespace AutoServiceBooking.Web.Controllers
                     ModelState.AddModelError(nameof(formModel.AutoServiceId), "Оберіть послугу.");
                 }
             }
-            else if (!await _dbContext.AutoServices.AnyAsync(autoService => autoService.Id == formModel.AutoServiceId.Value && autoService.IsActive))
+            else
             {
-                ModelState.AddModelError(nameof(formModel.AutoServiceId), "Оберіть активну послугу.");
+                selectedService = await _dbContext.AutoServices
+                    .FirstOrDefaultAsync(autoService => autoService.Id == formModel.AutoServiceId.Value && autoService.IsActive);
+
+                if (selectedService == null)
+                {
+                    ModelState.AddModelError(nameof(formModel.AutoServiceId), "Оберіть активну послугу.");
+                }
             }
 
             if (formModel.ScheduledAt <= DateTime.Now)
             {
                 ModelState.AddModelError(nameof(formModel.ScheduledAt), "Оберіть майбутню дату та час.");
+            }
+
+            if (selectedService != null)
+            {
+                string? workingHoursError = ValidateWorkingHours(formModel.ScheduledAt, selectedService.DurationMinutes);
+                if (workingHoursError != null)
+                {
+                    ModelState.AddModelError(nameof(formModel.ScheduledAt), workingHoursError);
+                }
+            }
+
+            BlockedDate? blockedDate = await FindBlockedDateAsync(formModel.ScheduledAt);
+            if (blockedDate != null)
+            {
+                ModelState.AddModelError(nameof(formModel.ScheduledAt), $"На {blockedDate.Date:dd.MM.yyyy} запис недоступний. Причина: {blockedDate.Reason}.");
+            }
+
+            if (selectedService != null)
+            {
+                DateTime scheduledAtUtc = DateTime.SpecifyKind(formModel.ScheduledAt, DateTimeKind.Local).ToUniversalTime();
+                Booking? overlappingBooking = await FindOverlappingBookingAsync(scheduledAtUtc, selectedService.DurationMinutes);
+
+                if (overlappingBooking != null)
+                {
+                    DateTime busyStart = overlappingBooking.ScheduledAt.ToLocalTime();
+                    DateTime busyEnd = busyStart.AddMinutes(GetBookingDurationMinutes(overlappingBooking));
+                    ModelState.AddModelError(nameof(formModel.ScheduledAt), $"Цей час зайнятий записом #{overlappingBooking.Id}: {busyStart:HH:mm}–{busyEnd:HH:mm}. Оберіть інший час.");
+                }
             }
 
             bool canUseSavedVehicle = User.Identity?.IsAuthenticated == true && formModel.SelectedVehicleId.HasValue;

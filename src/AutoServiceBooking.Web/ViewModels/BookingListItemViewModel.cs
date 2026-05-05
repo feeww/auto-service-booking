@@ -8,6 +8,8 @@ namespace AutoServiceBooking.Web.ViewModels
 
         public decimal AutoServicePrice { get; set; }
 
+        public int AutoServiceDurationMinutes { get; set; }
+
         public DateTime ScheduledAt { get; set; }
 
         public DateTime CreatedAt { get; set; }
@@ -33,6 +35,8 @@ namespace AutoServiceBooking.Web.ViewModels
         public decimal? EstimatedPrice { get; set; }
 
         public int? EstimatedDurationMinutes { get; set; }
+
+        public int RescheduleDurationMinutes => EstimatedDurationMinutes ?? AutoServiceDurationMinutes;
 
         public string? AdminComment { get; set; }
 

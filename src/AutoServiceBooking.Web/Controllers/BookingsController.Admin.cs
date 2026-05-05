@@ -27,6 +27,7 @@ namespace AutoServiceBooking.Web.Controllers
                 .ToListAsync();
 
             BookingListPageViewModel model = CreateBookingListPage(bookings, search, status, sort, true, pageNumber, totalBookings);
+            await FillAdminAvailabilityAsync(model);
 
             return View(model);
         }
@@ -36,7 +37,34 @@ namespace AutoServiceBooking.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Confirm(int id, decimal estimatedPrice, int estimatedDurationMinutes)
         {
-            return await ChangeAdminBookingAsync(id, booking => booking.Confirm(estimatedPrice, estimatedDurationMinutes), "Запис підтверджено.");
+            Booking? booking = await _dbContext.Bookings
+                .Include(currentBooking => currentBooking.AutoService)
+                .FirstOrDefaultAsync(currentBooking => currentBooking.Id == id);
+
+            if (booking == null)
+            {
+                return NotFound();
+            }
+
+            string? availabilityError = await ValidateAdminScheduleChangeAsync(booking, booking.ScheduledAt.ToLocalTime(), estimatedDurationMinutes);
+            if (availabilityError != null)
+            {
+                TempData["ErrorMessage"] = availabilityError;
+                return RedirectToAction(nameof(Admin));
+            }
+
+            try
+            {
+                booking.Confirm(estimatedPrice, estimatedDurationMinutes);
+                await _dbContext.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Запис підтверджено.";
+            }
+            catch (Exception exception) when (exception is InvalidOperationException || exception is ArgumentException)
+            {
+                TempData["ErrorMessage"] = exception.Message;
+            }
+
+            return RedirectToAction(nameof(Admin));
         }
 
         [HttpPost]
@@ -74,8 +102,64 @@ namespace AutoServiceBooking.Web.Controllers
                 return RedirectToAction(nameof(Admin));
             }
 
+            Booking? booking = await _dbContext.Bookings
+                .Include(currentBooking => currentBooking.AutoService)
+                .FirstOrDefaultAsync(currentBooking => currentBooking.Id == id);
+
+            if (booking == null)
+            {
+                return NotFound();
+            }
+
+            int durationMinutes = GetBookingDurationMinutes(booking);
+            string? availabilityError = await ValidateAdminScheduleChangeAsync(booking, scheduledAt, durationMinutes);
+            if (availabilityError != null)
+            {
+                TempData["ErrorMessage"] = availabilityError;
+                return RedirectToAction(nameof(Admin));
+            }
+
             DateTime scheduledAtUtc = DateTime.SpecifyKind(scheduledAt, DateTimeKind.Local).ToUniversalTime();
-            return await ChangeAdminBookingAsync(id, booking => booking.Reschedule(scheduledAtUtc), "Запис перенесено.");
+
+            try
+            {
+                booking.Reschedule(scheduledAtUtc);
+                await _dbContext.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Запис перенесено.";
+            }
+            catch (Exception exception) when (exception is InvalidOperationException || exception is ArgumentException)
+            {
+                TempData["ErrorMessage"] = exception.Message;
+            }
+
+            return RedirectToAction(nameof(Admin));
+        }
+
+        private async Task<string?> ValidateAdminScheduleChangeAsync(Booking booking, DateTime scheduledAt, int durationMinutes)
+        {
+            string? workingHoursError = ValidateWorkingHours(scheduledAt, durationMinutes);
+            if (workingHoursError != null)
+            {
+                return workingHoursError;
+            }
+
+            BlockedDate? blockedDate = await FindBlockedDateAsync(scheduledAt);
+            if (blockedDate != null)
+            {
+                return $"На {blockedDate.Date:dd.MM.yyyy} запис недоступний. Причина: {blockedDate.Reason}.";
+            }
+
+            DateTime scheduledAtUtc = DateTime.SpecifyKind(scheduledAt, DateTimeKind.Local).ToUniversalTime();
+            Booking? overlappingBooking = await FindOverlappingBookingAsync(scheduledAtUtc, durationMinutes, booking.Id);
+
+            if (overlappingBooking != null)
+            {
+                DateTime busyStart = overlappingBooking.ScheduledAt.ToLocalTime();
+                DateTime busyEnd = busyStart.AddMinutes(GetBookingDurationMinutes(overlappingBooking));
+                return $"Обраний час перетинається із заявкою #{overlappingBooking.Id}: {busyStart:HH:mm}–{busyEnd:HH:mm}.";
+            }
+
+            return null;
         }
 
         private async Task<IActionResult> ChangeAdminBookingAsync(int id, Action<Booking> changeStatus, string successMessage)

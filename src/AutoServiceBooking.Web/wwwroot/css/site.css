@@ -1489,11 +1489,23 @@ button {
 }
 
 .admin-booking-actions {
-    display: grid;
-    gap: 10px;
-    justify-items: stretch;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-self: stretch;
     min-width: 150px;
     padding-top: 8px;
+    position: relative;
+}
+
+.admin-booking-actions > form,
+.admin-booking-actions > details {
+    width: 100%;
+    margin: 0;
+}
+
+.start-work-action {
+    margin-top: auto !important;
 }
 
 .action-button {
@@ -1550,6 +1562,18 @@ button {
     color: #0f2f5f;
     background: #dcecff;
     border-color: #bcd0ee;
+}
+
+.action-muted {
+    color: #475569;
+    background: white;
+    border-color: var(--color-border);
+}
+
+.action-muted:hover {
+    color: #334155;
+    background: #f8fafc;
+    border-color: #cbd5e1;
 }
 
 .compact-button {
@@ -1927,6 +1951,278 @@ button {
     font-weight: bold;
 }
 
+.unavailable-dates-note ul {
+    margin-top: 10px;
+    padding-left: 18px;
+    font-size: 14px;
+}
+
+.calendar-warning {
+    margin-top: 7px;
+}
+
+.time-slot-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(78px, 86px));
+    gap: 10px;
+    justify-content: start;
+}
+
+.time-slot-button {
+    width: 100%;
+    min-height: 42px;
+    padding: 0 10px;
+    color: var(--color-primary-dark);
+    background: var(--color-primary-soft);
+    border: 1px solid var(--color-border-strong);
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: bold;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.time-slot-button:hover,
+.time-slot-button.active {
+    color: white;
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+}
+
+.time-slot-button.busy,
+.time-slot-button:disabled {
+    color: #94a3b8;
+    background: #f1f5f9;
+    border-color: #e2e8f0;
+    cursor: not-allowed;
+}
+
+.time-slot-helper {
+    margin: 8px 0 0;
+    color: var(--color-muted);
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.admin-time-slot-grid {
+    grid-template-columns: repeat(auto-fill, minmax(72px, 82px));
+}
+
+.reschedule-details {
+    display: grid;
+    gap: 10px;
+    position: relative;
+}
+
+.reschedule-details summary {
+    cursor: pointer;
+    list-style: none;
+}
+
+.reschedule-details summary::-webkit-details-marker {
+    display: none;
+}
+
+.reschedule-details[open] summary {
+    color: white;
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+}
+
+.reschedule-details .reschedule-booking-form {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    z-index: 12;
+    margin-top: 0;
+    width: 360px;
+    min-width: 0;
+    max-width: calc(100vw - 32px);
+    box-shadow: 0 18px 42px rgba(31, 41, 55, 0.14);
+}
+
+.reschedule-form-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+.input-invalid {
+    border-color: #fca5a5 !important;
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.08) !important;
+}
+
+.primary-button:disabled,
+.action-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.65;
+    box-shadow: none;
+}
+
+.admin-tabs {
+    margin-bottom: 22px;
+}
+
+.schedule-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 360px;
+    gap: 24px;
+    align-items: flex-start;
+}
+
+.schedule-main,
+.schedule-sidebar {
+    display: grid;
+    gap: 18px;
+}
+
+.schedule-days-grid {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 10px;
+}
+
+.schedule-day-card {
+    display: grid;
+    gap: 6px;
+    min-height: 118px;
+    padding: 14px;
+    color: #475569;
+    background: white;
+    border: 1px solid var(--color-border);
+    border-radius: 18px;
+    box-shadow: var(--shadow-card);
+}
+
+.schedule-day-card:hover,
+.schedule-day-card.active {
+    color: var(--color-primary-dark);
+    border-color: var(--color-border-strong);
+    text-decoration: none;
+}
+
+.schedule-day-card.active {
+    background: var(--color-primary-soft);
+}
+
+.schedule-day-card.blocked {
+    background: #fff7f7;
+    border-color: #fecaca;
+}
+
+.schedule-day-week {
+    color: var(--color-muted);
+    font-size: 13px;
+    text-transform: uppercase;
+}
+
+.schedule-day-card strong {
+    color: var(--color-heading);
+    font-size: 22px;
+}
+
+.schedule-day-card span:last-of-type,
+.schedule-day-card em {
+    font-size: 13px;
+}
+
+.schedule-day-card em {
+    display: inline-flex;
+    width: fit-content;
+    padding: 5px 8px;
+    color: #991b1b;
+    background: #fee2e2;
+    border-radius: 999px;
+    font-style: normal;
+    font-weight: bold;
+}
+
+.schedule-section-card {
+    padding: 24px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-card);
+}
+
+.schedule-section-card h2,
+.schedule-section-heading h2 {
+    margin: 0 0 12px;
+    color: var(--color-heading);
+}
+
+.schedule-section-heading {
+    margin-bottom: 16px;
+}
+
+.compact-empty-state {
+    padding: 24px;
+    box-shadow: none;
+}
+
+.schedule-booking-list,
+.blocked-date-list,
+.schedule-block-form {
+    display: grid;
+    gap: 12px;
+}
+
+.schedule-booking-card {
+    display: grid;
+    grid-template-columns: 76px minmax(0, 1fr) auto;
+    gap: 16px;
+    align-items: center;
+    padding: 16px;
+    background: var(--color-surface-soft);
+    border: 1px solid var(--color-border);
+    border-radius: 16px;
+}
+
+.schedule-booking-time {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    color: var(--color-primary-dark);
+    background: white;
+    border: 1px solid var(--color-border-strong);
+    border-radius: 12px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.schedule-booking-card h3 {
+    margin: 8px 0 6px;
+    color: var(--color-heading);
+}
+
+.schedule-booking-card p,
+.schedule-help-text,
+.blocked-date-card p {
+    margin: 0;
+    color: var(--color-muted);
+    line-height: 1.55;
+}
+
+.schedule-help-text {
+    margin-bottom: 16px;
+}
+
+.blocked-date-card {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    align-items: flex-start;
+    padding: 14px;
+    background: #fff7f7;
+    border: 1px solid #fecaca;
+    border-radius: 14px;
+}
+
+.blocked-date-card strong {
+    color: #991b1b;
+}
+
 .booking-success-section {
     width: min(720px, calc(100% - 96px));
     margin: 40px auto;
@@ -2042,7 +2338,8 @@ footer {
     .reviews-section,
     .footer-inner,
     .booking-page,
-    .booking-success-section {
+    .booking-success-section,
+    .cabinet-section {
         width: min(100% - 32px, 1320px);
     }
 
@@ -2058,9 +2355,11 @@ footer {
     .contact-section,
     .contact-cards,
     .booking-layout,
+    .schedule-layout,
     .booking-filter-form,
     .booking-list-card,
     .admin-service-card,
+    .schedule-booking-card,
     .booking-details-grid,
     .admin-details-grid,
     .service-admin-meta,
@@ -2073,8 +2372,8 @@ footer {
         padding: 28px;
     }
 
-    .cabinet-section {
-        width: min(100% - 32px, 1320px);
+    .schedule-days-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
     .cabinet-header,
@@ -2096,6 +2395,13 @@ footer {
 
     .booking-info-card {
         position: static;
+    }
+
+    .reschedule-details .reschedule-booking-form {
+        position: static;
+        width: 100%;
+        max-width: none;
+        margin-top: 10px;
     }
 
     .garage-visual,

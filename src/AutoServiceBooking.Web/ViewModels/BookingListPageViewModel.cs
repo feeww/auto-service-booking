@@ -19,6 +19,11 @@ namespace AutoServiceBooking.Web.ViewModels
         public bool HasNextPage => Page < TotalPages;
         public int FirstItemNumber => TotalItems == 0 ? 0 : ((Page - 1) * PageSize) + 1;
         public int LastItemNumber => Math.Min(Page * PageSize, TotalItems);
+        public int WorkDayStartHour { get; set; } = 9;
+        public int WorkDayEndHour { get; set; } = 19;
+        public int SlotStepMinutes { get; set; } = 30;
+        public List<BookingBlockedDateViewModel> BlockedDates { get; set; } = new();
+        public List<BookingOccupiedIntervalViewModel> OccupiedIntervals { get; set; } = new();
     }
 
     public class BookingStatusOptionViewModel

@@ -1,0 +1,137 @@
+@model AutoServiceBooking.Web.ViewModels.SchedulePageViewModel
+
+@{
+    ViewData["Title"] = "Розклад сервісу";
+}
+
+<section class="cabinet-section">
+    <div class="cabinet-header">
+        <div>
+            <p class="section-label">Адмін-панель</p>
+            <h1>Розклад сервісу</h1>
+            <p>Переглядайте записи по днях і закривайте дати, коли сервіс не приймає нові заявки.</p>
+        </div>
+    </div>
+
+    @if (TempData["SuccessMessage"] is string successMessage)
+    {
+        <div class="alert-message success-message">@successMessage</div>
+    }
+
+    @if (TempData["ErrorMessage"] is string errorMessage)
+    {
+        <div class="alert-message error-message">@errorMessage</div>
+    }
+
+    <nav class="vehicle-tabs admin-tabs" aria-label="Адмінські розділи">
+        <a class="vehicle-tab" asp-action="Admin">Заявки</a>
+        <a class="vehicle-tab active" asp-action="Schedule">Розклад</a>
+    </nav>
+
+    <div class="schedule-layout">
+        <div class="schedule-main">
+            <div class="schedule-days-grid">
+                @foreach (var day in Model.Days)
+                {
+                    <a class="schedule-day-card @(day.IsSelected ? "active" : string.Empty) @(day.IsBlocked ? "blocked" : string.Empty)"
+                       asp-action="Schedule"
+                       asp-route-date="@day.Date.ToString("yyyy-MM-dd")">
+                        <span class="schedule-day-week">@day.Date.ToString("ddd")</span>
+                        <strong>@day.Date.ToString("dd.MM")</strong>
+                        <span>@day.BookingCount записів</span>
+                        @if (day.IsBlocked)
+                        {
+                            <em title="@day.BlockReason">Закрито</em>
+                        }
+                    </a>
+                }
+            </div>
+
+            <section class="schedule-section-card">
+                <div class="schedule-section-heading">
+                    <div>
+                        <p class="section-label">@Model.SelectedDate.ToString("dd.MM.yyyy")</p>
+                        <h2>Записи на обрану дату</h2>
+                    </div>
+                </div>
+
+                @if (!Model.Bookings.Any())
+                {
+                    <div class="empty-state compact-empty-state">
+                        <h2>Записів немає</h2>
+                        <p>На цю дату клієнти ще не створювали заявки.</p>
+                    </div>
+                }
+                else
+                {
+                    <div class="schedule-booking-list">
+                        @foreach (var booking in Model.Bookings)
+                        {
+                            <article class="schedule-booking-card">
+                                <div class="schedule-booking-time">@booking.ScheduledAt.ToString("HH:mm")</div>
+                                <div>
+                                    <div class="booking-meta-line">
+                                        <span class="booking-number">Заявка #@booking.Id</span>
+                                        <span class="booking-status @booking.StatusCssClass">@booking.StatusName</span>
+                                    </div>
+                                    <h3>@booking.AutoServiceName</h3>
+                                    <p>@booking.CustomerName · @booking.CustomerPhone</p>
+                                    <p>@booking.VehicleTitle</p>
+                                </div>
+                                <a class="action-button action-secondary compact-button" asp-action="Admin" asp-route-search="#@booking.Id">Відкрити</a>
+                            </article>
+                        }
+                    </div>
+                }
+            </section>
+        </div>
+
+        <aside class="schedule-sidebar">
+            <section class="schedule-section-card">
+                <h2>Заблокувати дату</h2>
+                <p class="schedule-help-text">Клієнти не зможуть створити новий запис на закритий день. Поточні заявки не скасовуються автоматично.</p>
+
+                <form class="schedule-block-form" asp-action="BlockDate" method="post">
+                    <div class="form-row">
+                        <label for="Date">Дата</label>
+                        <input id="Date" name="Date" type="date" value="@Model.NewBlockedDate.Date.ToString("yyyy-MM-dd")" min="@DateTime.Today.ToString("yyyy-MM-dd")" />
+                    </div>
+
+                    <div class="form-row">
+                        <label for="Reason">Причина</label>
+                        <input id="Reason" name="Reason" maxlength="200" placeholder="Наприклад, вихідний або інвентаризація" />
+                    </div>
+
+                    <button class="action-button action-primary" type="submit">Закрити дату</button>
+                </form>
+            </section>
+
+            <section class="schedule-section-card">
+                <h2>Закриті дати</h2>
+
+                @if (!Model.BlockedDates.Any())
+                {
+                    <p class="schedule-help-text">Поки немає заблокованих дат.</p>
+                }
+                else
+                {
+                    <div class="blocked-date-list">
+                        @foreach (var blockedDate in Model.BlockedDates)
+                        {
+                            <article class="blocked-date-card">
+                                <div>
+                                    <strong>@blockedDate.Date.ToString("dd.MM.yyyy")</strong>
+                                    <p>@blockedDate.Reason</p>
+                                </div>
+                                <form asp-action="UnblockDate" method="post">
+                                    <input type="hidden" name="id" value="@blockedDate.Id" />
+                                    <button class="link-action-button" type="submit">Відкрити</button>
+                                </form>
+                            </article>
+                        }
+                    </div>
+                }
+            </section>
+        </aside>
+    </div>
+</section>
