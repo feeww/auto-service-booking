@@ -1,6 +1,7 @@
 using AutoServiceBooking.Web.Data;
 using AutoServiceBooking.Web.Extensions;
 using AutoServiceBooking.Web.Models;
+using AutoServiceBooking.Web.Services.Exports;
 using AutoServiceBooking.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,9 +14,12 @@ namespace AutoServiceBooking.Web.Controllers
     {
         private readonly ApplicationDbContext _dbContext;
 
-        public VehiclesController(ApplicationDbContext dbContext)
+        private readonly IExportService _exportService;
+
+        public VehiclesController(ApplicationDbContext dbContext, IExportService exportService)
         {
             _dbContext = dbContext;
+            _exportService = exportService;
         }
 
         [HttpGet]
@@ -218,12 +222,44 @@ namespace AutoServiceBooking.Web.Controllers
             return RedirectToAction(nameof(Index), new { tab = "active" });
         }
 
+        [HttpGet]
+        public async Task<IActionResult> HistoryPdf(int id)
+        {
+            Vehicle? vehicle = await FindOwnVehicleAsync(id);
+
+            if (vehicle == null)
+            {
+                return NotFound();
+            }
+
+            List<Booking> bookings = await GetVehicleHistoryBookingsAsync(vehicle.Id);
+            byte[] pdf = _exportService.CreateVehicleHistoryPdf(vehicle, bookings);
+
+            return File(pdf, "application/pdf", $"drivefix-{CreateSafeFileName(vehicle.LicensePlate)}-history.pdf");
+        }
+
+        private async Task<List<Booking>> GetVehicleHistoryBookingsAsync(int vehicleId)
+        {
+            return await _dbContext.Bookings
+                .Include(booking => booking.AutoService)
+                .Where(booking => booking.VehicleId == vehicleId && booking.Status == BookingStatus.Completed)
+                .OrderByDescending(booking => booking.ScheduledAt)
+                .ToListAsync();
+        }
+
         private async Task<Vehicle?> FindOwnVehicleAsync(int id)
         {
             int clientUserId = User.GetUserId();
 
             return await _dbContext.Vehicles
                 .FirstOrDefaultAsync(vehicle => vehicle.Id == id && vehicle.ClientUserId == clientUserId);
+        }
+
+        private static string CreateSafeFileName(string value)
+        {
+            char[] invalidChars = Path.GetInvalidFileNameChars();
+            string safeValue = new string(value.Select(character => invalidChars.Contains(character) ? '-' : character).ToArray());
+            return string.IsNullOrWhiteSpace(safeValue) ? "vehicle" : safeValue.ToLowerInvariant();
         }
 
     }

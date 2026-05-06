@@ -173,7 +173,8 @@ namespace AutoServiceBooking.Web.Controllers
                 CanReject = isAdminView && (booking.Status == BookingStatus.Pending || booking.Status == BookingStatus.Confirmed),
                 CanReschedule = isAdminView && (booking.Status == BookingStatus.Pending || booking.Status == BookingStatus.Confirmed),
                 CanStartWork = isAdminView && booking.Status == BookingStatus.Confirmed,
-                CanComplete = isAdminView && booking.Status == BookingStatus.InProgress
+                CanComplete = isAdminView && booking.Status == BookingStatus.InProgress,
+                CanExportAct = booking.Status == BookingStatus.Completed
             };
         }
 

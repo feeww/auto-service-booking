@@ -2,11 +2,15 @@ using AutoServiceBooking.Web.Data;
 using AutoServiceBooking.Web.Extensions;
 using AutoServiceBooking.Web.Services;
 using AutoServiceBooking.Web.Services.Bookings;
+using AutoServiceBooking.Web.Services.Exports;
 using AutoServiceBooking.Web.Services.Scheduling;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
+using QuestPDF.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
+
+QuestPDF.Settings.License = LicenseType.Community;
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
@@ -22,6 +26,7 @@ builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IScheduleService, ScheduleService>();
 builder.Services.AddScoped<IBookingService, BookingService>();
+builder.Services.AddScoped<IExportService, ExportService>();
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>

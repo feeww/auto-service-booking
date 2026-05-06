@@ -87,6 +87,11 @@
                     </div>
 
                     <div class="card-actions">
+                        @if (vehicle.BookingsCount > 0)
+                        {
+                            <a asp-action="HistoryPdf" asp-route-id="@vehicle.Id">PDF історія</a>
+                        }
+
                         @if (vehicle.IsArchived)
                         {
                             <form asp-action="Restore" asp-route-id="@vehicle.Id" method="post">

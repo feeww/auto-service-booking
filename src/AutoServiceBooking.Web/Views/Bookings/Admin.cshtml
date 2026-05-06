@@ -158,6 +158,11 @@
                     </div>
 
                     <div class="admin-booking-actions">
+                        @if (booking.CanExportAct)
+                        {
+                            <a class="action-button action-secondary" asp-action="ExportActPdf" asp-route-id="@booking.Id">PDF акт</a>
+                        }
+
                         @if (booking.CanConfirm)
                         {
                             <form class="confirm-booking-form" asp-action="Confirm" asp-route-id="@booking.Id" method="post">

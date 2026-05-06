@@ -1,4 +1,6 @@
+using AutoServiceBooking.Web.Extensions;
 using AutoServiceBooking.Web.Models;
+using AutoServiceBooking.Web.Models.Users;
 using AutoServiceBooking.Web.Services.Bookings;
 using AutoServiceBooking.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
@@ -76,6 +78,39 @@ namespace AutoServiceBooking.Web.Controllers
         {
             BookingOperationResult result = await _bookingService.RescheduleAsync(id, scheduledAt);
             return HandleAdminBookingResult(result, "Запис перенесено.");
+        }
+
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> ExportActPdf(int id)
+        {
+            bool isAdmin = User.IsInRole(UserRole.Admin.ToString());
+            int? clientUserId = isAdmin ? null : User.GetUserId();
+
+            IQueryable<Booking> query = _dbContext.Bookings
+                .Include(booking => booking.AutoService)
+                .Include(booking => booking.Vehicle);
+
+            if (!isAdmin)
+            {
+                query = query.Where(booking => booking.ClientUserId == clientUserId);
+            }
+
+            Booking? booking = await query.FirstOrDefaultAsync(currentBooking => currentBooking.Id == id);
+
+            if (booking == null)
+            {
+                return NotFound();
+            }
+
+            if (booking.Status != BookingStatus.Completed)
+            {
+                TempData["ErrorMessage"] = "PDF акт доступний тільки для завершених записів.";
+                return RedirectToAction(isAdmin ? nameof(Admin) : nameof(Index));
+            }
+
+            byte[] pdf = _exportService.CreateBookingActPdf(booking);
+            return File(pdf, "application/pdf", $"drivefix-act-{booking.Id}.pdf");
         }
 
         private IActionResult HandleAdminBookingResult(BookingOperationResult result, string successMessage)

@@ -147,11 +147,21 @@
                         }
                     </div>
 
-                    @if (booking.CanCancel)
+                    @if (booking.CanExportAct || booking.CanCancel)
                     {
-                        <form asp-controller="Bookings" asp-action="Cancel" asp-route-id="@booking.Id" method="post">
-                            <button class="action-button action-danger" type="submit">Скасувати</button>
-                        </form>
+                        <div class="card-actions">
+                            @if (booking.CanExportAct)
+                            {
+                                <a class="action-button action-secondary" asp-controller="Bookings" asp-action="ExportActPdf" asp-route-id="@booking.Id">PDF акт</a>
+                            }
+
+                            @if (booking.CanCancel)
+                            {
+                                <form asp-controller="Bookings" asp-action="Cancel" asp-route-id="@booking.Id" method="post">
+                                    <button class="action-button action-danger" type="submit">Скасувати</button>
+                                </form>
+                            }
+                        </div>
                     }
                 </article>
             }
