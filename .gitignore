@@ -91,9 +91,6 @@ artifacts/
 # ASP.NET Scaffolding
 ScaffoldingReadMe.txt
 
-# Entity Framework migrations are kept local for this coursework project
-**/Migrations/
-
 # StyleCop
 StyleCopReport.xml
 

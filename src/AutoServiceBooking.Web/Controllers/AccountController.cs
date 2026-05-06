@@ -144,7 +144,19 @@ namespace AutoServiceBooking.Web.Controllers
 
             try
             {
-                user.UpdateProfile(model.FullName, model.PhoneNumber);
+                string? normalizedPhoneNumber = UserInputNormalizer.NormalizePhoneNumber(model.PhoneNumber);
+
+                bool phoneExists = await _dbContext.Users.AnyAsync(currentUser =>
+                    currentUser.Id != user.Id &&
+                    currentUser.PhoneNumber == normalizedPhoneNumber);
+
+                if (phoneExists)
+                {
+                    ModelState.AddModelError(nameof(model.PhoneNumber), "Користувач з таким телефоном вже існує.");
+                    return View(model);
+                }
+
+                user.UpdateProfile(model.FullName, normalizedPhoneNumber ?? string.Empty);
 
                 if (!string.IsNullOrWhiteSpace(model.NewPassword))
                 {

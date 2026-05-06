@@ -35,6 +35,7 @@ namespace AutoServiceBooking.Web.Data
                 entity.HasKey(user => user.Id);
 
                 entity.HasIndex(user => user.Email).IsUnique();
+                entity.HasIndex(user => user.PhoneNumber).IsUnique();
 
                 entity.Property(user => user.FullName).HasMaxLength(100).IsRequired();
                 entity.Property(user => user.Email).HasMaxLength(100).IsRequired();

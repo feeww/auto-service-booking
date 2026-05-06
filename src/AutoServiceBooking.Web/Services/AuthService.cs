@@ -20,7 +20,9 @@ namespace AutoServiceBooking.Web.Services
         {
             try
             {
-                string email = NormalizeEmail(model.Email);
+                string email = UserInputNormalizer.NormalizeEmail(model.Email);
+                string? phoneNumber = UserInputNormalizer.NormalizePhoneNumber(model.PhoneNumber);
+
                 bool emailExists = await _context.Users.AnyAsync(user => user.Email == email);
 
                 if (emailExists)
@@ -28,8 +30,15 @@ namespace AutoServiceBooking.Web.Services
                     return CreateError("Користувач з таким email вже існує", nameof(model.Email));
                 }
 
+                bool phoneExists = await _context.Users.AnyAsync(user => user.PhoneNumber == phoneNumber);
+
+                if (phoneExists)
+                {
+                    return CreateError("Користувач з таким телефоном вже існує", nameof(model.PhoneNumber));
+                }
+
                 string passwordHash = _passwordHasher.HashPassword(model.Password);
-                ClientUser user = new ClientUser(model.FullName.Trim(), email, passwordHash, GetPhoneNumber(model.PhoneNumber));
+                ClientUser user = new ClientUser(model.FullName.Trim(), email, passwordHash, phoneNumber);
 
                 _context.Users.Add(user);
                 await _context.SaveChangesAsync();
@@ -46,7 +55,7 @@ namespace AutoServiceBooking.Web.Services
         {
             try
             {
-                string email = NormalizeEmail(model.Email);
+                string email = UserInputNormalizer.NormalizeEmail(model.Email);
                 AppUser? user = await _context.Users.FirstOrDefaultAsync(user => user.Email == email);
 
                 if (user == null || !_passwordHasher.VerifyPassword(model.Password, user.PasswordHash))
@@ -60,21 +69,6 @@ namespace AutoServiceBooking.Web.Services
             {
                 return CreateError("Не вдалося виконати вхід. Спробуйте ще раз.");
             }
-        }
-
-        private string NormalizeEmail(string email)
-        {
-            return email.Trim().ToLowerInvariant();
-        }
-
-        private string? GetPhoneNumber(string? phoneNumber)
-        {
-            if (string.IsNullOrWhiteSpace(phoneNumber))
-            {
-                return null;
-            }
-
-            return phoneNumber.Trim();
         }
 
         private AuthResult CreateSuccess(AppUser user)
